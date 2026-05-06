@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Unit Circle Practice</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f172a'/><circle cx='50' cy='50' r='35' fill='none' stroke='%2364748b' stroke-width='6'/><line x1='15' y1='50' x2='85' y2='50' stroke='%23475569' stroke-width='4'/><line x1='50' y1='15' x2='50' y2='85' stroke='%23475569' stroke-width='4'/><line x1='50' y1='50' x2='74.7' y2='25.3' stroke='%2338bdf8' stroke-width='6' stroke-linecap='round'/><circle cx='74.7' cy='25.3' r='6' fill='%2338bdf8'/></svg>">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
@@ -11,204 +14,68 @@
 
         /* --- Smooth view fade --- */
         .fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- Question stage transitions --- */
         .stage-enter { animation: stageEnter 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
         .stage-exit  { animation: stageExit  0.18s cubic-bezier(0.4, 0, 1, 1) both; }
-        @keyframes stageEnter {
-            from { opacity: 0; transform: translateY(12px) scale(0.985); }
-            to   { opacity: 1; transform: translateY(0)    scale(1); }
-        }
-        @keyframes stageExit {
-            from { opacity: 1; transform: translateY(0)     scale(1); }
-            to   { opacity: 0; transform: translateY(-10px) scale(0.985); }
-        }
+        @keyframes stageEnter { from { opacity: 0; transform: translateY(12px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes stageExit { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-10px) scale(0.985); } }
 
         /* --- Button base & press --- */
         .btn-reactive { transition: transform 0.1s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease; }
         .btn-reactive:active { transform: scale(0.96); }
 
-        .opt-btn {
-            transition:
-                transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
-                background-color 0.25s ease,
-                border-color 0.25s ease,
-                color 0.25s ease,
-                box-shadow 0.25s ease,
-                opacity 0.25s ease;
-        }
+        .opt-btn { transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease; }
 
         /* --- Answer feedback states --- */
-        .answer-correct {
-            background-color: rgb(22, 163, 74) !important;
-            border-color: rgb(74, 222, 128) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 24px rgba(34, 197, 94, 0.45), 0 0 0 2px rgba(74, 222, 128, 0.4);
-            animation: correctPulse 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        @keyframes correctPulse {
-            0%   { transform: scale(1); }
-            45%  { transform: scale(1.06); }
-            100% { transform: scale(1); }
-        }
+        .answer-correct { background-color: rgb(22, 163, 74) !important; border-color: rgb(74, 222, 128) !important; color: #ffffff !important; box-shadow: 0 0 24px rgba(34, 197, 94, 0.45), 0 0 0 2px rgba(74, 222, 128, 0.4); animation: correctPulse 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes correctPulse { 0% { transform: scale(1); } 45% { transform: scale(1.06); } 100% { transform: scale(1); } }
 
-        .answer-wrong {
-            background-color: rgb(220, 38, 38) !important;
-            border-color: rgb(248, 113, 113) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 24px rgba(239, 68, 68, 0.4);
-            animation: wrongShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-        }
-        @keyframes wrongShake {
-            0%, 100% { transform: translateX(0); }
-            20%      { transform: translateX(-6px); }
-            40%      { transform: translateX(6px); }
-            60%      { transform: translateX(-4px); }
-            80%      { transform: translateX(3px); }
-        }
+        .answer-wrong { background-color: rgb(220, 38, 38) !important; border-color: rgb(248, 113, 113) !important; color: #ffffff !important; box-shadow: 0 0 24px rgba(239, 68, 68, 0.4); animation: wrongShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+        @keyframes wrongShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
 
-        .answer-reveal {
-            background-color: rgba(34, 197, 94, 0.18) !important;
-            border-color: rgb(74, 222, 128) !important;
-            color: rgb(187, 247, 208) !important;
-            box-shadow: 0 0 18px rgba(34, 197, 94, 0.25);
-            animation: revealGlow 0.5s ease-out 0.1s both;
-        }
-        @keyframes revealGlow {
-            from { opacity: 0.4; transform: scale(0.98); }
-            to   { opacity: 1;   transform: scale(1); }
-        }
+        .answer-reveal { background-color: rgba(34, 197, 94, 0.18) !important; border-color: rgb(74, 222, 128) !important; color: rgb(187, 247, 208) !important; box-shadow: 0 0 18px rgba(34, 197, 94, 0.25); animation: revealGlow 0.5s ease-out 0.1s both; }
+        @keyframes revealGlow { from { opacity: 0.4; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        .answer-dim {
-            opacity: 0.35;
-            transform: scale(0.97);
-        }
-
+        .answer-dim { opacity: 0.35; transform: scale(0.97); }
         .opt-locked { pointer-events: none; cursor: default; }
 
         /* --- Progress / timer subtle update --- */
-        #game-progress, #game-timer {
-            transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
-        }
+        #game-progress, #game-timer { transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease; }
 
         /* --- Accuracy arrow + percentage flash --- */
-        .acc-arrow {
-            display: inline-block;
-            margin-left: 0.4rem;
-            min-width: 0.9em;
-            font-weight: 800;
-            font-size: 1.05em;
-            line-height: 1;
-        }
-        .acc-arrow-up {
-            color: rgb(74, 222, 128);
-            text-shadow: 0 0 12px rgba(74, 222, 128, 0.55);
-            animation: arrowUpPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-        }
-        .acc-arrow-down {
-            color: rgb(248, 113, 113);
-            text-shadow: 0 0 12px rgba(248, 113, 113, 0.5);
-            animation: arrowDownPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-        }
-        @keyframes arrowUpPop {
-            0%   { opacity: 0; transform: translateY(10px) scale(0.5); }
-            55%  { opacity: 1; transform: translateY(-3px) scale(1.2); }
-            100% { opacity: 1; transform: translateY(0)    scale(1); }
-        }
-        @keyframes arrowDownPop {
-            0%   { opacity: 0; transform: translateY(-10px) scale(0.5); }
-            55%  { opacity: 1; transform: translateY(3px)   scale(1.2); }
-            100% { opacity: 1; transform: translateY(0)     scale(1); }
-        }
+        .acc-arrow { display: inline-block; margin-left: 0.4rem; min-width: 0.9em; font-weight: 800; font-size: 1.05em; line-height: 1; }
+        .acc-arrow-up { color: rgb(74, 222, 128); text-shadow: 0 0 12px rgba(74, 222, 128, 0.55); animation: arrowUpPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+        .acc-arrow-down { color: rgb(248, 113, 113); text-shadow: 0 0 12px rgba(248, 113, 113, 0.5); animation: arrowDownPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+        @keyframes arrowUpPop { 0% { opacity: 0; transform: translateY(10px) scale(0.5); } 55% { opacity: 1; transform: translateY(-3px) scale(1.2); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes arrowDownPop { 0% { opacity: 0; transform: translateY(-10px) scale(0.5); } 55% { opacity: 1; transform: translateY(3px) scale(1.2); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
 
         #prog-pct { display: inline-block; transition: color 0.3s ease; }
         .pct-flash-green { animation: pctFlashGreen 0.7s ease-out; }
         .pct-flash-red   { animation: pctFlashRed   0.7s ease-out; }
-        @keyframes pctFlashGreen {
-            0%   { color: rgb(74, 222, 128); transform: scale(1.18); text-shadow: 0 0 14px rgba(74, 222, 128, 0.55); }
-            100% { color: rgb(125, 211, 252); transform: scale(1); text-shadow: none; }
-        }
-        @keyframes pctFlashRed {
-            0%   { color: rgb(248, 113, 113); transform: scale(1.18); text-shadow: 0 0 14px rgba(248, 113, 113, 0.5); }
-            100% { color: rgb(125, 211, 252); transform: scale(1); text-shadow: none; }
-        }
+        @keyframes pctFlashGreen { 0% { color: rgb(74, 222, 128); transform: scale(1.18); text-shadow: 0 0 14px rgba(74, 222, 128, 0.55); } 100% { color: rgb(125, 211, 252); transform: scale(1); text-shadow: none; } }
+        @keyframes pctFlashRed { 0% { color: rgb(248, 113, 113); transform: scale(1.18); text-shadow: 0 0 14px rgba(248, 113, 113, 0.5); } 100% { color: rgb(125, 211, 252); transform: scale(1); text-shadow: none; } }
 
         /* --- Difficulty selector --- */
-        .diff-btn {
-            padding: 0.5rem 0.25rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: rgb(148, 163, 184);
-            background: rgb(15, 23, 42);
-            border: 1px solid rgb(51, 65, 85);
-            cursor: pointer;
-            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-        }
+        .diff-btn { padding: 0.4rem 0.1rem; border-radius: 0.4rem; font-size: 0.75rem; font-weight: 700; color: rgb(148, 163, 184); background: rgb(15, 23, 42); border: 1px solid rgb(51, 65, 85); cursor: pointer; transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; }
         .diff-btn:hover { color: rgb(226, 232, 240); border-color: rgb(71, 85, 105); }
         .diff-btn:active { transform: scale(0.96); }
-        .diff-btn.diff-active {
-            color: white;
-            background: linear-gradient(to right, rgb(14, 165, 233), rgb(79, 70, 229));
-            border-color: rgb(56, 189, 248);
-            box-shadow: 0 0 14px rgba(14, 165, 233, 0.35);
-        }
+        .diff-btn.diff-active { color: white; background: linear-gradient(to right, rgb(14, 165, 233), rgb(79, 70, 229)); border-color: rgb(56, 189, 248); box-shadow: 0 0 14px rgba(14, 165, 233, 0.35); }
 
         /* --- Segmented toggle (rad/deg) --- */
         .seg-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; background: rgb(15, 23, 42); border: 1px solid rgb(51, 65, 85); border-radius: 0.5rem; padding: 0.2rem; }
-        .seg-btn {
-            padding: 0.4rem 0.5rem;
-            border-radius: 0.35rem;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: rgb(148, 163, 184);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: color 0.2s ease, background-color 0.2s ease;
-        }
+        .seg-btn { padding: 0.4rem 0.5rem; border-radius: 0.35rem; font-size: 0.8rem; font-weight: 700; color: rgb(148, 163, 184); background: transparent; border: none; cursor: pointer; transition: color 0.2s ease, background-color 0.2s ease; }
         .seg-btn:hover { color: rgb(226, 232, 240); }
-        .seg-btn.seg-active {
-            color: white;
-            background: linear-gradient(to right, rgb(14, 165, 233), rgb(79, 70, 229));
-        }
+        .seg-btn.seg-active { color: white; background: linear-gradient(to right, rgb(14, 165, 233), rgb(79, 70, 229)); }
 
         /* --- Golden graph button --- */
-        .gold-btn {
-            background: linear-gradient(135deg, rgb(251, 191, 36) 0%, rgb(245, 158, 11) 50%, rgb(217, 119, 6) 100%);
-            color: rgb(41, 25, 0);
-            border: 1px solid rgba(251, 191, 36, 0.6);
-            box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            animation: goldShimmer 3.2s ease-in-out infinite;
-        }
-        .gold-btn:hover {
-            background: linear-gradient(135deg, rgb(252, 211, 77) 0%, rgb(251, 191, 36) 50%, rgb(245, 158, 11) 100%);
-            box-shadow: 0 0 32px rgba(245, 158, 11, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-        }
-        @keyframes goldShimmer {
-            0%, 100% { box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
-            50%      { box-shadow: 0 0 32px rgba(251, 191, 36, 0.7),  inset 0 1px 0 rgba(255, 255, 255, 0.3); }
-        }
+        .gold-btn { background: linear-gradient(135deg, rgb(251, 191, 36) 0%, rgb(245, 158, 11) 50%, rgb(217, 119, 6) 100%); color: rgb(41, 25, 0); border: 1px solid rgba(251, 191, 36, 0.6); box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2); animation: goldShimmer 3.2s ease-in-out infinite; }
+        .gold-btn:hover { background: linear-gradient(135deg, rgb(252, 211, 77) 0%, rgb(251, 191, 36) 50%, rgb(245, 158, 11) 100%); box-shadow: 0 0 32px rgba(245, 158, 11, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+        @keyframes goldShimmer { 0%, 100% { box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2); } 50% { box-shadow: 0 0 32px rgba(251, 191, 36, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3); } }
 
         /* --- Open-ended input --- */
-        .open-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            font-size: 1.5rem;
-            font-weight: 800;
-            text-align: center;
-            color: white;
-            background: rgb(15, 23, 42);
-            border: 2px solid rgb(71, 85, 105);
-            border-radius: 0.75rem;
-            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
+        .open-input { width: 100%; padding: 1.1rem 1rem; font-size: 1.75rem; font-weight: 800; text-align: center; color: white; background: rgb(15, 23, 42); border: 2px solid rgb(71, 85, 105); border-radius: 0.75rem; font-family: ui-monospace, 'SF Mono', Menlo, monospace; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
         .open-input:focus { border-color: rgb(56, 189, 248); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); }
         .open-input.input-correct { border-color: rgb(74, 222, 128); background: rgba(34, 197, 94, 0.12); color: rgb(187, 247, 208); animation: correctPulse 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .open-input.input-wrong { border-color: rgb(248, 113, 113); background: rgba(239, 68, 68, 0.08); color: rgb(254, 202, 202); animation: wrongShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
@@ -216,49 +83,15 @@
         .open-correct-reveal { color: rgb(74, 222, 128); font-weight: 700; }
 
         /* --- On-screen keypad for open-ended answers --- */
-        .open-keypad {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.4rem;
-            margin-top: 0.85rem;
-        }
+        .open-keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-top: 0.85rem; }
         .open-keypad.pad-locked { opacity: 0.4; pointer-events: none; }
-        .kp-btn {
-            padding: 0.75rem 0.5rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: rgb(226, 232, 240);
-            background: rgb(30, 41, 59);
-            border: 1px solid rgb(51, 65, 85);
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-            transition: background-color 0.12s ease, transform 0.08s ease, border-color 0.12s ease;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .kp-btn:hover  { background: rgb(51, 65, 85); border-color: rgb(71, 85, 105); }
+        .kp-btn { padding: 0.85rem 0.5rem; font-size: 1.05rem; font-weight: 700; color: rgb(226, 232, 240); background: rgb(30, 41, 59); border: 1px solid rgb(51, 65, 85); border-radius: 0.5rem; cursor: pointer; font-family: ui-monospace, 'SF Mono', Menlo, monospace; transition: background-color 0.12s ease, transform 0.08s ease, border-color 0.12s ease; user-select: none; -webkit-tap-highlight-color: transparent; }
+        .kp-btn:hover { background: rgb(51, 65, 85); border-color: rgb(71, 85, 105); }
         .kp-btn:active { transform: scale(0.95); background: rgb(71, 85, 105); }
         .kp-symbol { color: rgb(252, 211, 77); font-family: 'Inter', sans-serif; font-weight: 800; }
         .kp-back { color: rgb(248, 113, 113); }
-        .kp-dne {
-            color: rgb(148, 163, 184);
-            font-size: 0.8rem;
-            letter-spacing: 0.05em;
-            font-family: 'Inter', sans-serif;
-        }
-        .kp-submit {
-            grid-column: span 4;
-            background: linear-gradient(to right, rgb(14, 165, 233), rgb(79, 70, 229));
-            color: white;
-            padding: 0.95rem;
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            border-color: rgb(56, 189, 248);
-            box-shadow: 0 0 14px rgba(14, 165, 233, 0.25);
-        }
+        .kp-dne { color: rgb(148, 163, 184); font-size: 0.8rem; letter-spacing: 0.05em; font-family: 'Inter', sans-serif; }
+        .kp-submit { grid-column: span 4; background: linear-gradient(to right, rgb(14, 165, 233), rgb(79, 70, 229)); color: white; padding: 0.95rem; font-size: 1rem; font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: 0.05em; border-color: rgb(56, 189, 248); box-shadow: 0 0 14px rgba(14, 165, 233, 0.25); }
         .kp-submit:hover { background: linear-gradient(to right, rgb(56, 189, 248), rgb(99, 102, 241)); box-shadow: 0 0 18px rgba(14, 165, 233, 0.4); }
 
         /* --- Graph SVG plot --- */
@@ -271,144 +104,42 @@
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
         /* --- Mistake card stagger --- */
-        .mistake-card {
-            opacity: 0;
-            animation: mistakeCardIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-        @keyframes mistakeCardIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
+        .mistake-card { opacity: 0; animation: mistakeCardIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes mistakeCardIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
         /* --- Hint panel --- */
-        .hint-trigger {
-            display: block;
-            width: 100%;
-            padding: 0.625rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: rgb(148, 163, 184);
-            border: 1px dashed rgb(51, 65, 85);
-            background: transparent;
-            transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-            cursor: pointer;
-        }
-        .hint-trigger:hover {
-            color: rgb(252, 211, 77);
-            border-color: rgba(245, 158, 11, 0.5);
-            background-color: rgba(245, 158, 11, 0.05);
-        }
-        .hint-panel {
-            animation: hintPanelIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-        @keyframes hintPanelIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        .hint-trigger { display: block; width: 100%; padding: 0.625rem 0.75rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; color: rgb(148, 163, 184); border: 1px dashed rgb(51, 65, 85); background: transparent; transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease; cursor: pointer; }
+        .hint-trigger:hover { color: rgb(252, 211, 77); border-color: rgba(245, 158, 11, 0.5); background-color: rgba(245, 158, 11, 0.05); }
+        .hint-panel { animation: hintPanelIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes hintPanelIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- Timer paused state --- */
-        #game-timer.timer-paused {
-            color: rgb(148, 163, 184) !important;
-            border-color: rgb(71, 85, 105) !important;
-            animation: pausedPulse 1.6s ease-in-out infinite;
-        }
-        @keyframes pausedPulse {
-            0%, 100% { opacity: 0.55; }
-            50%      { opacity: 1; }
-        }
+        #game-timer.timer-paused { color: rgb(148, 163, 184) !important; border-color: rgb(71, 85, 105) !important; animation: pausedPulse 1.6s ease-in-out infinite; }
+        @keyframes pausedPulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
 
         /* --- Streak badge --- */
-        .streak-badge {
-            display: inline-block;
-            margin-left: 0.55rem;
-            color: rgb(251, 146, 60);
-            font-weight: 800;
-            text-shadow: 0 0 10px rgba(251, 146, 60, 0.4);
-            animation: streakPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .streak-badge { display: inline-block; margin-left: 0.55rem; color: rgb(251, 146, 60); font-weight: 800; text-shadow: 0 0 10px rgba(251, 146, 60, 0.4); animation: streakPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .streak-hot { text-shadow: 0 0 14px rgba(251, 146, 60, 0.7); }
-        @keyframes streakPop {
-            0%   { opacity: 0; transform: scale(0.6); }
-            60%  { opacity: 1; transform: scale(1.18); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        @keyframes streakPop { 0% { opacity: 0; transform: scale(0.6); } 60% { opacity: 1; transform: scale(1.18); } 100% { opacity: 1; transform: scale(1); } }
 
         /* --- Keyboard hint glyph on option buttons --- */
-        .kbd-hint {
-            position: absolute;
-            top: 6px;
-            left: 8px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: rgb(148, 163, 184);
-            background: rgba(15, 23, 42, 0.75);
-            padding: 1px 6px;
-            border-radius: 4px;
-            border: 1px solid rgb(71, 85, 105);
-            line-height: 1.3;
-            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-        .opt-btn.answer-correct .kbd-hint,
-        .opt-btn.answer-wrong .kbd-hint,
-        .opt-btn.answer-reveal .kbd-hint,
-        .opt-btn.answer-dim .kbd-hint { opacity: 0; }
-
-        .kbd-key {
-            display: inline-block;
-            margin-left: 0.4rem;
-            padding: 0px 6px;
-            font-size: 0.7rem;
-            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-            color: rgb(148, 163, 184);
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgb(71, 85, 105);
-            border-radius: 3px;
-            line-height: 1.4;
-        }
+        .kbd-hint { position: absolute; top: 6px; left: 8px; font-size: 0.65rem; font-weight: 600; color: rgb(148, 163, 184); background: rgba(15, 23, 42, 0.75); padding: 1px 6px; border-radius: 4px; border: 1px solid rgb(71, 85, 105); line-height: 1.3; font-family: ui-monospace, 'SF Mono', Menlo, monospace; pointer-events: none; transition: opacity 0.2s ease; }
+        .opt-btn.answer-correct .kbd-hint, .opt-btn.answer-wrong .kbd-hint, .opt-btn.answer-reveal .kbd-hint, .opt-btn.answer-dim .kbd-hint { opacity: 0; }
+        .kbd-key { display: inline-block; margin-left: 0.4rem; padding: 0px 6px; font-size: 0.7rem; font-family: ui-monospace, 'SF Mono', Menlo, monospace; color: rgb(148, 163, 184); background: rgba(15, 23, 42, 0.6); border: 1px solid rgb(71, 85, 105); border-radius: 3px; line-height: 1.4; }
 
         /* --- Per-function accuracy breakdown --- */
-        .func-row {
-            opacity: 0;
-            animation: funcRowIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-        @keyframes funcRowIn {
-            from { opacity: 0; transform: translateX(-6px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-        .func-bar-fill {
-            width: 0;
-            animation: barFill 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
-        }
-        @keyframes barFill {
-            from { width: 0; }
-            to   { width: var(--bar-width, 0%); }
-        }
+        .func-row { opacity: 0; animation: funcRowIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes funcRowIn { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: translateX(0); } }
+        .func-bar-fill { width: 0; animation: barFill 0.7s cubic-bezier(0.4, 0, 0.2, 1) both; }
+        @keyframes barFill { from { width: 0; } to { width: var(--bar-width, 0%); } }
 
         /* --- Personal best display --- */
-        .pb-card {
-            animation: pbIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-        @keyframes pbIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .pb-new {
-            color: rgb(74, 222, 128);
-            font-weight: 700;
-            text-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
-        }
+        .pb-card { animation: pbIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes pbIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        .pb-new { color: rgb(74, 222, 128); font-weight: 700; text-shadow: 0 0 8px rgba(74, 222, 128, 0.4); }
 
         /* --- Unit circle SVG --- */
-        .unit-circle-svg {
-            display: block;
-            width: 100%;
-            max-width: 200px;
-            height: auto;
-            margin: 0 auto;
-        }
+        .unit-circle-svg { display: block; width: 100%; max-width: 250px; height: auto; margin: 0 auto; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -425,26 +156,42 @@
             <p id="header-subtitle" class="text-slate-400 mt-2 font-medium">Master the Unit Circle</p>
         </div>
 
-        <div id="view-menu" class="p-6">
-            <div class="space-y-6">
-                <div class="bg-slate-700/50 rounded-xl p-4 space-y-4 border border-slate-600">
-                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">Question Settings</h2>
+        <div id="view-menu" class="p-5">
+            <div class="space-y-5">
+                
+                <div class="grid grid-cols-1 gap-3">
+                    <button onclick="startGame('speed')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">
+                        ⚡ Start Speed Round
+                    </button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="startGame('unlimited')" class="btn-reactive w-full py-3 rounded-xl font-bold text-slate-200 bg-slate-700 hover:bg-slate-600 border border-slate-500">
+                            ∞ Endless Practice
+                        </button>
+                        <button onclick="openGraphMenu()" class="btn-reactive gold-btn w-full py-3 rounded-xl font-extrabold text-slate-900">
+                            ✦ Graph Practice
+                        </button>
+                    </div>
+                </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <label class="flex items-center space-x-3 cursor-pointer">
-                            <input type="checkbox" id="cfg-basic" checked class="w-5 h-5 accent-sky-500 rounded">
-                            <span class="text-slate-200">sin, cos, tan</span>
+                <div class="bg-slate-700/40 rounded-xl p-4 border border-slate-600 space-y-4">
+                    <h2 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Unit Circle Settings</h2>
+
+                    <div class="flex space-x-4 bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/50">
+                        <label class="flex-1 flex items-center justify-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="cfg-basic" checked class="w-4 h-4 accent-sky-500 rounded">
+                            <span class="text-slate-300 text-sm font-medium">sin, cos, tan</span>
                         </label>
-                        <label class="flex items-center space-x-3 cursor-pointer">
-                            <input type="checkbox" id="cfg-recip" checked class="w-5 h-5 accent-sky-500 rounded">
-                            <span class="text-slate-200">csc, sec, cot</span>
+                        <div class="w-px bg-slate-700"></div>
+                        <label class="flex-1 flex items-center justify-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="cfg-recip" checked class="w-4 h-4 accent-sky-500 rounded">
+                            <span class="text-slate-300 text-sm font-medium">csc, sec, cot</span>
                         </label>
                     </div>
 
-                    <div class="pt-1">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Difficulty</span>
-                            <span id="diff-desc" class="text-xs text-slate-500 italic">Some negative angles</span>
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-[10px] text-slate-400 font-semibold uppercase">Difficulty</span>
+                            <span id="diff-desc" class="text-[10px] text-slate-500 italic">Some negative angles</span>
                         </div>
                         <div id="diff-buttons" class="grid grid-cols-4 gap-1.5">
                             <button type="button" data-diff="easy"    onclick="setDifficulty('easy')"    class="diff-btn">Easy</button>
@@ -454,84 +201,94 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <div>
-                            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">Angle Format</div>
-                            <div class="seg-toggle" id="angle-toggle">
-                                <button type="button" data-unit="radians" onclick="setAngleUnit('radians')" class="seg-btn">Radians</button>
-                                <button type="button" data-unit="degrees" onclick="setAngleUnit('degrees')" class="seg-btn">Degrees</button>
-                            </div>
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-semibold uppercase mb-1.5">Angle Format</div>
+                        <div class="seg-toggle" id="angle-toggle">
+                            <button type="button" data-unit="radians" onclick="setAngleUnit('radians')" class="seg-btn">Radians</button>
+                            <button type="button" data-unit="degrees" onclick="setAngleUnit('degrees')" class="seg-btn">Degrees</button>
                         </div>
-                        <div>
-                            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">Answer Mode</div>
-                            <div class="seg-toggle" id="answer-toggle">
-                                <button type="button" data-mode="choice" onclick="setAnswerMode('choice')" class="seg-btn">Multiple Choice</button>
-                                <button type="button" data-mode="open"   onclick="setAnswerMode('open')"   class="seg-btn">Open-Ended</button>
-                            </div>
+                    </div>
+
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-semibold uppercase mb-1.5">Answer Mode</div>
+                        <div class="seg-toggle" id="answer-toggle">
+                            <button type="button" data-mode="choice" onclick="setAnswerMode('choice')" class="seg-btn">Multiple Choice</button>
+                            <button type="button" data-mode="open"   onclick="setAnswerMode('open')"   class="seg-btn">Open Ended</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
-                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">Speed Round Limits</h2>
+                <div class="bg-slate-700/40 rounded-xl p-4 border border-slate-600">
+                    <h2 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Speed Round Limits</h2>
                     <div class="flex space-x-4">
-                        <div class="flex-1">
-                            <label class="block text-xs text-slate-400 mb-1">Time (min)</label>
-                            <input type="number" id="cfg-time" value="5" min="0.5" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                        <div class="flex-1 relative">
+                            <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Time (min)</label>
+                            <input type="number" id="cfg-time" value="5" min="0.5" step="0.5" class="w-full bg-slate-800 border border-slate-600 rounded-lg pl-3 pr-2 py-2 text-sm text-white font-medium focus:outline-none focus:border-sky-500 transition-colors">
                         </div>
-                        <div class="flex-1">
-                            <label class="block text-xs text-slate-400 mb-1">Questions</label>
-                            <input type="number" id="cfg-count" value="20" min="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                        <div class="flex-1 relative">
+                            <label class="block text-[10px] text-slate-400 uppercase font-semibold mb-1">Questions</label>
+                            <input type="number" id="cfg-count" value="20" min="1" class="w-full bg-slate-800 border border-slate-600 rounded-lg pl-3 pr-2 py-2 text-sm text-white font-medium focus:outline-none focus:border-sky-500 transition-colors">
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-3 pt-2">
-                    <button onclick="startGame('unlimited')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-slate-700 hover:bg-slate-600 text-white border border-slate-500">
-                        Endless Practice Mode
-                    </button>
-                    <button onclick="startGame('speed')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">
-                        Start Speed Round
-                    </button>
-                    <button onclick="openGraphMenu()" class="btn-reactive gold-btn w-full py-4 rounded-xl font-extrabold text-lg">
-                        ✦ Graph Practice
-                    </button>
-                </div>
             </div>
         </div>
 
-        <div id="view-graph-menu" class="p-6 hidden">
-            <div class="space-y-6">
-                <div class="bg-slate-700/50 rounded-xl p-4 space-y-3 border border-slate-600">
-                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">Graph Topics</h2>
-                    <label class="flex items-center space-x-3 cursor-pointer">
-                        <input type="checkbox" id="gt-sincos" checked class="w-5 h-5 accent-amber-400 rounded">
-                        <span class="text-slate-200 text-sm">Sine & cosine waves <span class="text-slate-500 text-xs">(amplitude, period, phase, midline)</span></span>
-                    </label>
-                    <label class="flex items-center space-x-3 cursor-pointer">
-                        <input type="checkbox" id="gt-tancot" checked class="w-5 h-5 accent-amber-400 rounded">
-                        <span class="text-slate-200 text-sm">Tangent & cotangent <span class="text-slate-500 text-xs">(asymptotes, period)</span></span>
-                    </label>
-                    <label class="flex items-center space-x-3 cursor-pointer">
-                        <input type="checkbox" id="gt-seccsc" class="w-5 h-5 accent-amber-400 rounded">
-                        <span class="text-slate-200 text-sm">Secant & cosecant <span class="text-slate-500 text-xs">(asymptotes, range)</span></span>
-                    </label>
-                    <label class="flex items-center space-x-3 cursor-pointer">
-                        <input type="checkbox" id="gt-inverse" class="w-5 h-5 accent-amber-400 rounded">
-                        <span class="text-slate-200 text-sm">Inverse trig <span class="text-slate-500 text-xs">(domain, range)</span></span>
-                    </label>
+        <div id="view-graph-menu" class="p-5 hidden">
+            <div class="space-y-5">
+                <div class="bg-slate-700/40 rounded-xl p-4 border border-slate-600 space-y-4">
+                    <h2 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Graph Topics</h2>
+                    
+                    <div class="space-y-3">
+                        <label class="flex items-start space-x-3 cursor-pointer">
+                            <input type="checkbox" id="gt-sincos" checked class="w-5 h-5 mt-0.5 accent-amber-400 rounded border-none">
+                            <div class="flex flex-col">
+                                <span class="text-slate-200 text-sm font-medium">Sine & cosine waves</span>
+                                <span class="text-slate-500 text-xs">Amplitude, period, phase, midline</span>
+                            </div>
+                        </label>
+                        <div class="w-full h-px bg-slate-700/50"></div>
+                        
+                        <label class="flex items-start space-x-3 cursor-pointer">
+                            <input type="checkbox" id="gt-tancot" checked class="w-5 h-5 mt-0.5 accent-amber-400 rounded border-none">
+                            <div class="flex flex-col">
+                                <span class="text-slate-200 text-sm font-medium">Tangent & cotangent</span>
+                                <span class="text-slate-500 text-xs">Asymptotes, period</span>
+                            </div>
+                        </label>
+                        <div class="w-full h-px bg-slate-700/50"></div>
+                        
+                        <label class="flex items-start space-x-3 cursor-pointer">
+                            <input type="checkbox" id="gt-seccsc" class="w-5 h-5 mt-0.5 accent-amber-400 rounded border-none">
+                            <div class="flex flex-col">
+                                <span class="text-slate-200 text-sm font-medium">Secant & cosecant</span>
+                                <span class="text-slate-500 text-xs">Asymptotes, range</span>
+                            </div>
+                        </label>
+                        <div class="w-full h-px bg-slate-700/50"></div>
+                        
+                        <label class="flex items-start space-x-3 cursor-pointer">
+                            <input type="checkbox" id="gt-inverse" class="w-5 h-5 mt-0.5 accent-amber-400 rounded border-none">
+                            <div class="flex flex-col">
+                                <span class="text-slate-200 text-sm font-medium">Inverse trig</span>
+                                <span class="text-slate-500 text-xs">Domain, range</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
 
-                <div class="bg-slate-700/50 rounded-xl p-4 border border-slate-600 text-xs text-slate-400 leading-relaxed">
-                    <span class="text-amber-300 font-bold">Tip:</span> Your answer mode is chosen on the previous screen. In typing mode, use <span class="font-mono bg-slate-900 px-1.5 py-0.5 rounded text-amber-200">r</span> for √, <span class="font-mono bg-slate-900 px-1.5 py-0.5 rounded text-amber-200">p</span> for π. Press <span class="font-mono bg-slate-900 px-1.5 py-0.5 rounded">Enter</span> to submit.
+                <div class="bg-slate-800/80 rounded-xl p-4 border border-slate-700 text-xs text-slate-400 leading-relaxed text-center">
+                    <span class="text-amber-400 font-bold block mb-1">💡 Pro Tip</span> 
+                    Your answer mode is chosen on the main screen. In <span class="text-slate-300 font-medium">Open Ended</span> mode, type <span class="font-mono bg-slate-900 px-1.5 py-0.5 rounded text-amber-200">r</span> for √ and <span class="font-mono bg-slate-900 px-1.5 py-0.5 rounded text-amber-200">p</span> for π.
                 </div>
 
                 <div class="grid grid-cols-1 gap-3 pt-2">
                     <button onclick="startGraphGame()" class="btn-reactive gold-btn w-full py-4 rounded-xl font-extrabold text-lg">
                         Start Graph Practice
                     </button>
-                    <button onclick="goHome()" class="btn-reactive w-full py-3 rounded-lg font-bold text-slate-300 bg-slate-700/50 hover:bg-slate-700 border border-slate-600">
-                        Back
+                    <button onclick="goHome()" class="btn-reactive w-full py-3 rounded-lg font-bold text-slate-300 bg-slate-700 hover:bg-slate-600 border border-slate-500">
+                        Back to Main Menu
                     </button>
                 </div>
             </div>
@@ -634,7 +391,7 @@
 
         const baseAngles = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330, 360];
 
-        // Strategic distractor packages - forces user to read carefully
+        // Strategic distractor packages
         const optionFamilies = [
             ['√3/3', '-√3/3', '√3', '-√3'],
             ['1/2', '-1/2', '√3/2', '-√3/2', '2', '-2', '2√3/3', '-2√3/3'],
@@ -916,6 +673,7 @@
             return 'rgb(248, 113, 113)';                  // red
         }
 
+        // Updated viewBox layout to ensure no clipped text on labels
         function buildUnitCircleSvg(deg) {
             const norm = ((deg % 360) + 360) % 360;
             const rad = norm * Math.PI / 180;
@@ -944,15 +702,15 @@
             const ly = py + labelDist * (-Math.sin(rad)) + (py >= 0 ? 4 : -2);
             const anchor = lx > 3 ? 'start' : (lx < -3 ? 'end' : 'middle');
 
-            return `<svg viewBox="-115 -95 230 190" class="unit-circle-svg" xmlns="http://www.w3.org/2000/svg">
-                <line x1="-92" y1="0" x2="92" y2="0" stroke="rgb(71,85,105)" stroke-width="1"/>
-                <line x1="0" y1="-85" x2="0" y2="85" stroke="rgb(71,85,105)" stroke-width="1"/>
+            return `<svg viewBox="-150 -120 300 240" class="unit-circle-svg" xmlns="http://www.w3.org/2000/svg">
+                <line x1="-140" y1="0" x2="140" y2="0" stroke="rgb(71,85,105)" stroke-width="1"/>
+                <line x1="0" y1="-110" x2="0" y2="110" stroke="rgb(71,85,105)" stroke-width="1"/>
                 <circle cx="0" cy="0" r="${R}" fill="none" stroke="rgb(100,116,139)" stroke-width="1" opacity="0.55"/>
                 ${dropLines}
                 ${arcPath}
                 <line x1="0" y1="0" x2="${px.toFixed(2)}" y2="${py.toFixed(2)}" stroke="rgb(125,211,252)" stroke-width="2"/>
                 <circle cx="${px.toFixed(2)}" cy="${py.toFixed(2)}" r="4" fill="rgb(125,211,252)"/>
-                <text x="${lx.toFixed(2)}" y="${ly.toFixed(2)}" text-anchor="${anchor}" fill="rgb(186,230,253)" font-size="10" font-family="ui-monospace, monospace" font-weight="bold">(${cosStr}, ${sinStr})</text>
+                <text x="${lx.toFixed(2)}" y="${ly.toFixed(2)}" text-anchor="${anchor}" fill="rgb(186,230,253)" font-size="11" font-family="ui-monospace, monospace" font-weight="bold">(${cosStr}, ${sinStr})</text>
             </svg>`;
         }
 
