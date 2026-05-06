@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Unit Circle Practice</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; touch-action: manipulation; }
 
         /* --- Smooth view fade --- */
         .fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -157,6 +157,112 @@
             border-color: rgb(56, 189, 248);
             box-shadow: 0 0 14px rgba(14, 165, 233, 0.35);
         }
+
+        /* --- Segmented toggle (rad/deg) --- */
+        .seg-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; background: rgb(15, 23, 42); border: 1px solid rgb(51, 65, 85); border-radius: 0.5rem; padding: 0.2rem; }
+        .seg-btn {
+            padding: 0.4rem 0.5rem;
+            border-radius: 0.35rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: rgb(148, 163, 184);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+        .seg-btn:hover { color: rgb(226, 232, 240); }
+        .seg-btn.seg-active {
+            color: white;
+            background: linear-gradient(to right, rgb(14, 165, 233), rgb(79, 70, 229));
+        }
+
+        /* --- Golden graph button --- */
+        .gold-btn {
+            background: linear-gradient(135deg, rgb(251, 191, 36) 0%, rgb(245, 158, 11) 50%, rgb(217, 119, 6) 100%);
+            color: rgb(41, 25, 0);
+            border: 1px solid rgba(251, 191, 36, 0.6);
+            box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: goldShimmer 3.2s ease-in-out infinite;
+        }
+        .gold-btn:hover {
+            background: linear-gradient(135deg, rgb(252, 211, 77) 0%, rgb(251, 191, 36) 50%, rgb(245, 158, 11) 100%);
+            box-shadow: 0 0 32px rgba(245, 158, 11, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+        @keyframes goldShimmer {
+            0%, 100% { box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+            50%      { box-shadow: 0 0 32px rgba(251, 191, 36, 0.7),  inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+        }
+
+        /* --- Open-ended input --- */
+        .open-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-align: center;
+            color: white;
+            background: rgb(15, 23, 42);
+            border: 2px solid rgb(71, 85, 105);
+            border-radius: 0.75rem;
+            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .open-input:focus { border-color: rgb(56, 189, 248); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); }
+        .open-input.input-correct { border-color: rgb(74, 222, 128); background: rgba(34, 197, 94, 0.12); color: rgb(187, 247, 208); animation: correctPulse 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .open-input.input-wrong { border-color: rgb(248, 113, 113); background: rgba(239, 68, 68, 0.08); color: rgb(254, 202, 202); animation: wrongShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+        .open-meta { font-size: 0.7rem; color: rgb(100, 116, 139); margin-top: 0.6rem; text-align: center; font-family: ui-monospace, monospace; }
+        .open-correct-reveal { color: rgb(74, 222, 128); font-weight: 700; }
+
+        /* --- On-screen keypad for open-ended answers --- */
+        .open-keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.4rem;
+            margin-top: 0.85rem;
+        }
+        .open-keypad.pad-locked { opacity: 0.4; pointer-events: none; }
+        .kp-btn {
+            padding: 0.75rem 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: rgb(226, 232, 240);
+            background: rgb(30, 41, 59);
+            border: 1px solid rgb(51, 65, 85);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+            transition: background-color 0.12s ease, transform 0.08s ease, border-color 0.12s ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .kp-btn:hover  { background: rgb(51, 65, 85); border-color: rgb(71, 85, 105); }
+        .kp-btn:active { transform: scale(0.95); background: rgb(71, 85, 105); }
+        .kp-symbol { color: rgb(252, 211, 77); font-family: 'Inter', sans-serif; font-weight: 800; }
+        .kp-back { color: rgb(248, 113, 113); }
+        .kp-dne {
+            color: rgb(148, 163, 184);
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            font-family: 'Inter', sans-serif;
+        }
+        .kp-submit {
+            grid-column: span 4;
+            background: linear-gradient(to right, rgb(14, 165, 233), rgb(79, 70, 229));
+            color: white;
+            padding: 0.95rem;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            border-color: rgb(56, 189, 248);
+            box-shadow: 0 0 14px rgba(14, 165, 233, 0.25);
+        }
+        .kp-submit:hover { background: linear-gradient(to right, rgb(56, 189, 248), rgb(99, 102, 241)); box-shadow: 0 0 18px rgba(14, 165, 233, 0.4); }
+
+        /* --- Graph SVG plot --- */
+        .graph-plot { width: 100%; height: auto; max-height: 240px; background: rgb(15, 23, 42); border: 1px solid rgb(51, 65, 85); border-radius: 0.5rem; }
 
         /* --- Mistakes scrollbar --- */
         ::-webkit-scrollbar { width: 8px; }
@@ -347,6 +453,23 @@
                             <button type="button" data-diff="extreme" onclick="setDifficulty('extreme')" class="diff-btn">Extreme</button>
                         </div>
                     </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div>
+                            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">Angle Format</div>
+                            <div class="seg-toggle" id="angle-toggle">
+                                <button type="button" data-unit="radians" onclick="setAngleUnit('radians')" class="seg-btn">Radians</button>
+                                <button type="button" data-unit="degrees" onclick="setAngleUnit('degrees')" class="seg-btn">Degrees</button>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2">Answer Mode</div>
+                            <div class="seg-toggle" id="answer-toggle">
+                                <button type="button" data-mode="choice" onclick="setAnswerMode('choice')" class="seg-btn">Multiple</button>
+                                <button type="button" data-mode="open"   onclick="setAnswerMode('open')"   class="seg-btn">Type</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
@@ -370,6 +493,46 @@
                     <button onclick="startGame('speed')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">
                         Start Speed Round
                     </button>
+                    <button onclick="openGraphMenu()" class="btn-reactive gold-btn w-full py-4 rounded-xl font-extrabold text-lg">
+                        ✦ Graph Practice
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-graph-menu" class="p-6 hidden">
+            <div class="space-y-6">
+                <div class="bg-slate-700/50 rounded-xl p-4 space-y-3 border border-slate-600">
+                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">Graph Topics</h2>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="gt-sincos" checked class="w-5 h-5 accent-amber-400 rounded">
+                        <span class="text-slate-200 text-sm">Sine & cosine waves <span class="text-slate-500 text-xs">(amplitude, period, phase, midline)</span></span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="gt-tancot" checked class="w-5 h-5 accent-amber-400 rounded">
+                        <span class="text-slate-200 text-sm">Tangent & cotangent <span class="text-slate-500 text-xs">(asymptotes, period)</span></span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="gt-seccsc" class="w-5 h-5 accent-amber-400 rounded">
+                        <span class="text-slate-200 text-sm">Secant & cosecant <span class="text-slate-500 text-xs">(asymptotes, range)</span></span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="gt-inverse" class="w-5 h-5 accent-amber-400 rounded">
+                        <span class="text-slate-200 text-sm">Inverse trig <span class="text-slate-500 text-xs">(domain, range)</span></span>
+                    </label>
+                </div>
+
+                <div class="bg-slate-700/50 rounded-xl p-4 border border-slate-600 text-xs text-slate-400 leading-relaxed">
+                    <span class="text-amber-300 font-bold">Tip:</span> Your answer mode is chosen on the previous screen. In typing mode, use <span class="font-mono bg-slate-900 px-1.5 py-0.5 rounded text-amber-200">r</span> for √, <span class="font-mono bg-slate-900 px-1.5 py-0.5 rounded text-amber-200">p</span> for π. Press <span class="font-mono bg-slate-900 px-1.5 py-0.5 rounded">Enter</span> to submit.
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 pt-2">
+                    <button onclick="startGraphGame()" class="btn-reactive gold-btn w-full py-4 rounded-xl font-extrabold text-lg">
+                        Start Graph Practice
+                    </button>
+                    <button onclick="goHome()" class="btn-reactive w-full py-3 rounded-lg font-bold text-slate-300 bg-slate-700/50 hover:bg-slate-700 border border-slate-600">
+                        Back
+                    </button>
                 </div>
             </div>
         </div>
@@ -380,10 +543,39 @@
                 <div id="game-timer" class="text-xl font-mono font-bold text-sky-400 bg-slate-900 px-4 py-1 rounded-lg border border-slate-700">00:00</div>
             </div>
 
-            <div id="question-stage" class="flex-1 flex flex-col justify-center items-center py-8">
-                <div id="question-text" class="text-6xl font-extrabold tracking-tight mb-12">tan(5π/4)</div>
-                
+            <div id="question-stage" class="flex-1 flex flex-col justify-center items-center py-6">
+                <div id="graph-image" class="w-full mb-4 hidden"></div>
+                <div id="question-text" class="text-4xl font-extrabold tracking-tight mb-6 text-center px-2">tan(5π/4)</div>
+
                 <div id="options-grid" class="grid grid-cols-2 gap-4 w-full">
+                </div>
+
+                <div id="open-area" class="w-full hidden">
+                    <input type="text" id="open-input" class="open-input" placeholder="type answer..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div id="open-meta" class="open-meta">Tap the keypad below · or type <span class="text-amber-300 font-bold">r</span> for √, <span class="text-amber-300 font-bold">p</span> for π</div>
+                    <div id="open-keypad" class="open-keypad hidden">
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('7')" class="kp-btn">7</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('8')" class="kp-btn">8</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('9')" class="kp-btn">9</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padBackspace()" class="kp-btn kp-back">⌫</button>
+
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('4')" class="kp-btn">4</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('5')" class="kp-btn">5</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('6')" class="kp-btn">6</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('/')" class="kp-btn kp-symbol">/</button>
+
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('1')" class="kp-btn">1</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('2')" class="kp-btn">2</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('3')" class="kp-btn">3</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('-')" class="kp-btn kp-symbol">−</button>
+
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('√')" class="kp-btn kp-symbol">√</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('0')" class="kp-btn">0</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padPress('π')" class="kp-btn kp-symbol">π</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="padInsertWord('DNE')" class="kp-btn kp-dne">DNE</button>
+
+                        <button type="button" onmousedown="event.preventDefault()" onclick="submitOpenAnswer()" class="kp-btn kp-submit">Submit ✓</button>
+                    </div>
                 </div>
             </div>
 
@@ -428,6 +620,9 @@
     </div>
 
     <script>
+        /* --- OS DETECTION --- */
+        const isMobileOS = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
         /* --- MATH & UNIT CIRCLE ENGINE --- */
         const baseVals = {
             0:  { sin: '0', cos: '1', tan: '0', cot: 'Undefined', sec: '1', csc: 'Undefined' },
@@ -445,6 +640,14 @@
             ['1/2', '-1/2', '√3/2', '-√3/2', '2', '-2', '2√3/3', '-2√3/3'],
             ['√2/2', '-√2/2', '√2', '-√2', '1', '-1'],
             ['0', 'Undefined', '1', '-1']
+        ];
+        
+        // Graph mode distractor packages
+        const graphOptionFamilies = [
+            ['1', '-1', '2', '-2', '3', '-3', '0', '4', '1/2', '-1/2'],
+            ['π', '2π', '3π', '4π', 'π/2', 'π/3', '2π/3', '3π/2', 'π/4'],
+            ['-π/2', '-π/4', '-π/3', '-π/6', '0', 'π/6', 'π/4', 'π/3', 'π/2', 'π'],
+            ['DNE', 'Undefined', '0', '1', '-1']
         ];
 
         function degToRadStr(deg) {
@@ -518,7 +721,6 @@
             const ref = getReferenceAngleDeg(deg);
             const stripSign = s => s.replace(/^-/, '');
 
-            // 1. Pure sign error — same magnitude, wrong sign
             if (correct !== 'Undefined' && selected !== 'Undefined' &&
                 correct !== '0' && stripSign(selected) === stripSign(correct) &&
                 selected !== correct && quad) {
@@ -526,7 +728,6 @@
                 return `Right magnitude, wrong sign — ${func} is ${correctSign} in Q${quad}`;
             }
 
-            // 2. Reciprocal confusion — picked the value of the reciprocal function
             const reciprocals = { sin: 'csc', csc: 'sin', cos: 'sec', sec: 'cos', tan: 'cot', cot: 'tan' };
             const recipFunc = reciprocals[func];
             if (recipFunc) {
@@ -536,7 +737,6 @@
                 }
             }
 
-            // 3. Cofunction confusion — picked the value of the cofunction
             const cofunctions = { sin: 'cos', cos: 'sin', tan: 'cot', cot: 'tan', sec: 'csc', csc: 'sec' };
             const cofunc = cofunctions[func];
             if (cofunc) {
@@ -546,30 +746,18 @@
                 }
             }
 
-            // 4. Target answer is undefined
             if (correct === 'Undefined') {
-                if (func === 'tan' || func === 'sec') {
-                    return `${func} is undefined where cos = 0 (π/2 and 3π/2)`;
-                }
-                if (func === 'cot' || func === 'csc') {
-                    return `${func} is undefined where sin = 0 (0 and π)`;
-                }
+                if (func === 'tan' || func === 'sec') return `${func} is undefined where cos = 0 (π/2 and 3π/2)`;
+                if (func === 'cot' || func === 'csc') return `${func} is undefined where sin = 0 (0 and π)`;
             }
 
-            // 5. User picked Undefined when it shouldn't be
             if (selected === 'Undefined' && correct !== 'Undefined') {
                 return `Not undefined here — the denominator isn't zero at this angle`;
             }
 
-            // 6. Axis position context
-            if (axis === 'x') {
-                return `On the x-axis: sin = 0, cos = ±1, tan = 0`;
-            }
-            if (axis === 'y') {
-                return `On the y-axis: cos = 0, sin = ±1, tan undefined`;
-            }
+            if (axis === 'x') return `On the x-axis: sin = 0, cos = ±1, tan = 0`;
+            if (axis === 'y') return `On the y-axis: cos = 0, sin = ±1, tan undefined`;
 
-            // 7. Default: reference angle + quadrant
             return `Reference angle is ${degToRadStr(ref)} in Q${quad}`;
         }
 
@@ -613,7 +801,86 @@
             return lines;
         }
 
-        /* --- Helpers for stats, time formatting, and the unit circle SVG --- */
+        /* --- GRAPH MODE hint engine (during play) and mistake tip engine (post-game) --- */
+        function classifyGraphQuestion(qText) {
+            const t = (qText || '').toLowerCase();
+            if (t.includes('amplitude'))   return 'amplitude';
+            if (t.includes('phase shift')) return 'phase';
+            if (t.includes('period'))      return 'period';
+            if (t.includes('midline'))     return 'midline';
+            if (t.includes('maximum'))     return 'maximum';
+            if (t.includes('minimum'))     return 'minimum';
+            if (t.includes('asymptote'))   return 'asymptote';
+            if (t.includes('range'))       return 'range';
+            if (t.includes('domain'))      return 'domain';
+            if (/arc(sin|cos|tan)\s*\(/i.test(qText)) return 'inverse-value';
+            if (/endpoint|boundary|largest|smallest/i.test(qText)) return 'inverse-bound';
+            return 'other';
+        }
+
+        function getGraphQuestionHint(q) {
+            const kind = classifyGraphQuestion(q.qText);
+            const lines = [];
+
+            if (q.topic === 'sincos') {
+                lines.push('General form: y = A·sin(B(x − C)) + D');
+                if      (kind === 'amplitude') lines.push('Amplitude = |A|. Always positive — the absolute value of the coefficient out front.');
+                else if (kind === 'period')    lines.push('Period of sin/cos = 2π / B. Larger B → faster oscillation → shorter period.');
+                else if (kind === 'midline')   lines.push('Midline is the horizontal line y = D, the constant added at the end.');
+                else if (kind === 'maximum')   lines.push('Max = midline + amplitude = D + |A|.');
+                else if (kind === 'minimum')   lines.push('Min = midline − amplitude = D − |A|.');
+                else if (kind === 'phase')     lines.push('Phase shift = C in y = A·sin(B(x − C)). Positive C → shift right; negative C → shift left.');
+            } else if (q.topic === 'tancot') {
+                lines.push('Tangent and cotangent are the "fast" ones — period π, not 2π.');
+                if      (kind === 'period')    lines.push('Period of tan(Bx) and cot(Bx) = π / B.');
+                else if (kind === 'asymptote' && /tan\s*\(/.test(q.qText)) lines.push('tan is undefined where cos = 0. First positive asymptote of tan(Bx): x = π / (2B).');
+                else if (kind === 'asymptote' && /cot\s*\(/.test(q.qText)) lines.push('cot is undefined where sin = 0. First positive asymptote of cot(Bx): x = π / B (then 2π/B, 3π/B, …).');
+            } else if (q.topic === 'seccsc') {
+                lines.push('sec = 1/cos and csc = 1/sin — they live wherever cos or sin is not zero.');
+                if      (kind === 'period')    lines.push('sec and csc have period 2π, same as their reciprocals.');
+                else if (kind === 'asymptote' && /sec\s*\(/.test(q.qText)) lines.push('Asymptotes of sec(x) match the zeros of cos(x): π/2, 3π/2, 5π/2, …');
+                else if (kind === 'asymptote' && /csc\s*\(/.test(q.qText)) lines.push('Asymptotes of csc(x) match the zeros of sin(x): 0, π, 2π, …');
+                else if (kind === 'range')     lines.push('Range of A·sec(x) or A·csc(x): y ≥ |A| or y ≤ −|A|. The middle band is forbidden.');
+            } else if (q.topic === 'inverse') {
+                lines.push('Inverse trig domains and ranges:');
+                lines.push('arcsin: domain [−1, 1], range [−π/2, π/2]   ·   arccos: domain [−1, 1], range [0, π]   ·   arctan: domain ℝ, range (−π/2, π/2)');
+                if (kind === 'inverse-value') lines.push('For specific values, ask: "what angle in the right range gives this output?"');
+            }
+
+            if (lines.length === 0) lines.push('Think about the general form of this function and which parameter the question is asking about.');
+            return lines;
+        }
+
+        function getGraphMistakeHint(m) {
+            const kind = classifyGraphQuestion(m.question);
+
+            if (m.topic === 'sincos') {
+                if (kind === 'amplitude') return 'Amplitude = |A| — take the absolute value, even when A is negative.';
+                if (kind === 'period')    return 'Period of sin/cos = 2π/B. Don\'t leave it as 2π — divide by the inner coefficient.';
+                if (kind === 'midline')   return 'Midline is the constant D added at the end (the vertical shift).';
+                if (kind === 'maximum')   return 'Max = D + |A| — start at the midline, go up by the amplitude.';
+                if (kind === 'minimum')   return 'Min = D − |A| — start at the midline, go down by the amplitude.';
+                if (kind === 'phase')     return 'Phase shift = C in y = A·sin(B(x − C)). Watch the sign carefully.';
+            }
+            if (m.topic === 'tancot') {
+                if (kind === 'period')    return 'tan and cot have period π/B — half of sin/cos. Easy to confuse.';
+                if (kind === 'asymptote' && /tan\s*\(/.test(m.question)) return 'tan(Bx) asymptotes are at x = π/(2B), 3π/(2B), 5π/(2B), … (where cos = 0).';
+                if (kind === 'asymptote' && /cot\s*\(/.test(m.question)) return 'cot(Bx) asymptotes are at x = 0, π/B, 2π/B, … (where sin = 0).';
+            }
+            if (m.topic === 'seccsc') {
+                if (kind === 'period')    return 'sec and csc match their reciprocals: period 2π.';
+                if (kind === 'asymptote' && /sec\s*\(/.test(m.question)) return 'sec(x) blows up where cos(x) = 0: x = π/2, 3π/2, …';
+                if (kind === 'asymptote' && /csc\s*\(/.test(m.question)) return 'csc(x) blows up where sin(x) = 0: x = 0, π, 2π, …';
+                if (kind === 'range')     return 'Range of A·sec or A·csc: y ≥ |A| or y ≤ −|A|. The band between is excluded.';
+            }
+            if (m.topic === 'inverse') {
+                if (/arcsin/.test(m.question)) return 'arcsin output range is [−π/2, π/2]. Match the input to the angle in that range whose sin gives that value.';
+                if (/arccos/.test(m.question)) return 'arccos output range is [0, π]. Match the input to the angle in that range whose cos gives that value.';
+                if (/arctan/.test(m.question)) return 'arctan output range is (−π/2, π/2). Open interval — never exactly ±π/2.';
+            }
+            return 'Review the relevant formula and try this type of problem again.';
+        }
+
         function formatTime(sec) {
             sec = Math.max(0, Math.round(sec));
             const m = Math.floor(sec / 60);
@@ -622,19 +889,24 @@
         }
 
         function getFunctionStats(history) {
-            const byFunc = {};
+            const isGraph = history.length > 0 && history[0].topic !== undefined;
+            const byKey = {};
             history.forEach(h => {
-                if (!byFunc[h.func]) byFunc[h.func] = { correct: 0, total: 0 };
-                byFunc[h.func].total++;
-                if (h.isRight) byFunc[h.func].correct++;
+                const key = isGraph ? h.topic : h.func;
+                if (!key) return;
+                if (!byKey[key]) byKey[key] = { correct: 0, total: 0 };
+                byKey[key].total++;
+                if (h.isRight) byKey[key].correct++;
             });
-            // Order: sin, cos, tan, csc, sec, cot — only ones used
-            const order = ['sin', 'cos', 'tan', 'csc', 'sec', 'cot'];
-            return order.filter(f => byFunc[f]).map(f => ({
-                func: f,
-                correct: byFunc[f].correct,
-                total: byFunc[f].total,
-                pct: Math.round((byFunc[f].correct / byFunc[f].total) * 100)
+            const order = isGraph
+                ? ['sincos', 'tancot', 'seccsc', 'inverse']
+                : ['sin', 'cos', 'tan', 'csc', 'sec', 'cot'];
+            const labels = { sincos: 'sin/cos', tancot: 'tan/cot', seccsc: 'sec/csc', inverse: 'inverse' };
+            return order.filter(k => byKey[k]).map(k => ({
+                func: labels[k] || k,
+                correct: byKey[k].correct,
+                total: byKey[k].total,
+                pct: Math.round((byKey[k].correct / byKey[k].total) * 100)
             }));
         }
 
@@ -649,7 +921,7 @@
             const rad = norm * Math.PI / 180;
             const R = 70;
             const px = R * Math.cos(rad);
-            const py = -R * Math.sin(rad); // SVG y is inverted
+            const py = -R * Math.sin(rad);
 
             const cosStr = getAnswer('cos', deg);
             const sinStr = getAnswer('sin', deg);
@@ -661,14 +933,12 @@
             const arcPath = norm < 1 ? '' :
                 `<path d="M ${arcR} 0 A ${arcR} ${arcR} 0 ${largeArc} 0 ${arcEndX.toFixed(2)} ${arcEndY.toFixed(2)}" stroke="rgb(125,211,252)" fill="none" stroke-width="1.8"/>`;
 
-            // Drop perpendiculars (only when off the axes)
             const onAxis = Math.abs(px) < 0.5 || Math.abs(py) < 0.5;
             const dropLines = onAxis ? '' : `
                 <line x1="${px.toFixed(2)}" y1="${py.toFixed(2)}" x2="${px.toFixed(2)}" y2="0" stroke="rgb(245,158,11)" stroke-width="1" stroke-dasharray="3,3" opacity="0.75"/>
                 <line x1="0" y1="0" x2="${px.toFixed(2)}" y2="0" stroke="rgb(245,158,11)" stroke-width="1.5" opacity="0.75"/>
             `;
 
-            // Label position — push outward from origin
             const labelDist = 14;
             const lx = px + labelDist * Math.cos(rad);
             const ly = py + labelDist * (-Math.sin(rad)) + (py >= 0 ? 4 : -2);
@@ -686,17 +956,16 @@
             </svg>`;
         }
 
-        /* --- Persistent storage for personal best (graceful degradation) --- */
         async function loadSpeedRecords() {
             try {
                 const result = await window.storage.get('speed-records');
                 if (result && result.value) return JSON.parse(result.value);
-            } catch (e) { /* no-op: storage unavailable or no record yet */ }
+            } catch (e) { }
             return {};
         }
         async function saveSpeedRecords(records) {
             try { await window.storage.set('speed-records', JSON.stringify(records)); }
-            catch (e) { /* no-op: storage unavailable */ }
+            catch (e) { }
         }
 
         /* --- AUDIO ENGINE --- */
@@ -706,7 +975,6 @@
         function toggleAudio() {
             audioEnabled = !audioEnabled;
             document.getElementById('audio-toggle').innerText = audioEnabled ? '🔊' : '🔇';
-            // Browsers pause audio context until user interaction, wake it up if needed
             if (audioEnabled && audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
@@ -720,7 +988,6 @@
             oscillator.type = type;
             oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
 
-            // Envelope to make the sound "plucky" and satisfying instead of harsh
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime + delay);
             gainNode.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + delay + 0.01);
             gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
@@ -733,23 +1000,20 @@
         }
 
         function playCorrect() {
-            // A cheerful, ascending perfect 5th
-            playTone(523.25, 'sine', 0.15, 0.15, 0);   // C5
-            playTone(783.99, 'sine', 0.3, 0.15, 0.08); // G5 
+            playTone(523.25, 'sine', 0.15, 0.15, 0);
+            playTone(783.99, 'sine', 0.3, 0.15, 0.08); 
         }
 
         function playWrong() {
-            // A low, muted buzz
             playTone(150, 'sawtooth', 0.2, 0.1, 0);
             playTone(130, 'square', 0.25, 0.1, 0.1);
         }
 
         function playFinish() {
-            // Triumphant C-major arpeggio
-            playTone(523.25, 'sine', 0.1, 0.15, 0);     // C5
-            playTone(659.25, 'sine', 0.1, 0.15, 0.1);   // E5
-            playTone(783.99, 'sine', 0.1, 0.15, 0.2);   // G5
-            playTone(1046.50, 'sine', 0.4, 0.15, 0.3);  // C6
+            playTone(523.25, 'sine', 0.1, 0.15, 0);
+            playTone(659.25, 'sine', 0.1, 0.15, 0.1);
+            playTone(783.99, 'sine', 0.1, 0.15, 0.2);
+            playTone(1046.50, 'sine', 0.4, 0.15, 0.3);
         }
 
         /* --- GAME STATE --- */
@@ -767,37 +1031,35 @@
             paused: false,
             streak: 0,
             drillSet: null,
-            recentKeys: []
+            recentKeys: [],
+            gameType: 'unit-circle'
         };
+        let angleUnit = 'radians';
+        let answerMode = 'choice';
 
         function getActiveFunctions() {
             let funcs = [];
             if (document.getElementById('cfg-basic').checked) funcs.push('sin', 'cos', 'tan');
             if (document.getElementById('cfg-recip').checked) funcs.push('csc', 'sec', 'cot');
-            if (funcs.length === 0) funcs = ['sin']; // Fallback
+            if (funcs.length === 0) funcs = ['sin'];
             return funcs;
         }
 
         function generateQuestion() {
-            // Estimate pool size to size the cooldown buffer adaptively.
-            // Too-large cooldown on a small pool would cause infinite loops or starvation.
             let poolSize;
             if (state.drillSet && state.drillSet.length > 0) {
                 poolSize = state.drillSet.length;
             } else {
                 const funcCount = getActiveFunctions().length;
                 const preset = DIFFICULTY[currentDifficulty] || DIFFICULTY.medium;
-                // baseAngles has 17 entries; multiply by ~variant count if neg/over enabled
                 let variants = 1;
                 if (preset.neg > 0)  variants += 1;
                 if (preset.over > 0) variants += 1;
                 poolSize = funcCount * baseAngles.length * variants;
             }
-            // Cooldown = avoid the last N questions. Keep it well below pool size.
             const cooldown = Math.max(1, Math.min(8, Math.floor(poolSize / 2)));
 
             let func, deg, key;
-            // Try up to 20 times to find a non-recent question, then accept whatever
             for (let attempt = 0; attempt < 20; attempt++) {
                 if (state.drillSet && state.drillSet.length > 0) {
                     const pick = state.drillSet[Math.floor(Math.random() * state.drillSet.length)];
@@ -815,14 +1077,12 @@
                 if (!state.recentKeys.includes(key)) break;
             }
 
-            // Track this question; trim to cooldown size
             state.recentKeys.push(key);
             if (state.recentKeys.length > cooldown) state.recentKeys.shift();
 
             const radStr = degToRadStr(deg);
             const correctAns = getAnswer(func, deg);
 
-            // Generate strategic options
             let pool = optionFamilies.find(f => f.includes(correctAns)) || optionFamilies[0];
             pool = shuffle([...pool]);
             
@@ -832,7 +1092,6 @@
                 options.add(opt);
             }
             
-            // If pool was too small, grab randoms to fill
             let allOpts = [].concat(...optionFamilies);
             while(options.size < 4) {
                 options.add(allOpts[Math.floor(Math.random() * allOpts.length)]);
@@ -844,6 +1103,7 @@
         /* --- UI CONTROLLERS --- */
         const views = {
             menu: document.getElementById('view-menu'),
+            graphMenu: document.getElementById('view-graph-menu'),
             game: document.getElementById('view-game'),
             results: document.getElementById('view-results')
         };
@@ -855,7 +1115,6 @@
             });
             const target = views[viewName];
             target.classList.remove('hidden');
-            // The game view needs to be a flex column to space content + end button
             if (viewName === 'game') target.classList.add('flex');
             target.classList.remove('fade-in');
             void target.offsetWidth;
@@ -866,6 +1125,7 @@
             if (audioEnabled && audioCtx.state === 'suspended') audioCtx.resume();
             
             state.mode = mode;
+            state.gameType = 'unit-circle';
             state.history = [];
             state.locked = false;
             state.active = true;
@@ -874,7 +1134,6 @@
             state.drillSet = drillSet;
             state.recentKeys = [];
             state.targetCount = parseInt(document.getElementById('cfg-count').value) || 20;
-            // Time input is now in MINUTES — convert to seconds internally
             const minutes = parseFloat(document.getElementById('cfg-time').value) || 5;
             state.targetTime = Math.max(1, Math.round(minutes * 60));
             state.timeTotal = state.mode === 'speed' ? state.targetTime : 0;
@@ -889,7 +1148,7 @@
 
             clearInterval(state.interval);
             state.interval = setInterval(updateTimer, 1000);
-            updateTimer(); // instant update
+            updateTimer();
 
             switchView('game');
             renderNextQuestion();
@@ -920,7 +1179,6 @@
 
         function renderProgress() {
             const el = document.getElementById('game-progress');
-            // Hide streak specifically in speed mode to make it feel like a strict test
             const streakHtml = (state.streak > 0 && state.mode !== 'speed')
                 ? `<span class="streak-badge${state.streak >= 5 ? ' streak-hot' : ''}">🔥 ${state.streak}</span>`
                 : '';
@@ -929,7 +1187,6 @@
                 el.innerHTML = `Q: ${state.history.length + 1} / ${state.targetCount}${streakHtml}`;
                 return;
             }
-            // Unlimited mode: live accuracy display
             const total = state.history.length;
             const correct = state.history.filter(h => h.isRight).length;
             const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
@@ -944,7 +1201,7 @@
 
         function flashAccuracy(isCorrect) {
             if (state.mode !== 'unlimited') return;
-            renderProgress(); // refresh numbers first
+            renderProgress();
             const arrow = document.getElementById('acc-arrow');
             const pct = document.getElementById('prog-pct');
             if (arrow) {
@@ -953,12 +1210,11 @@
             }
             if (pct) {
                 pct.classList.remove('pct-flash-green', 'pct-flash-red');
-                void pct.offsetWidth; // restart animation
+                void pct.offsetWidth;
                 pct.classList.add(isCorrect ? 'pct-flash-green' : 'pct-flash-red');
             }
         }
 
-        /* --- Attention pause: stop the clock when the tab is hidden or blurred --- */
         function pauseTimer() {
             if (!state.active || state.paused) return;
             if (state.interval) {
@@ -1005,15 +1261,312 @@
             const desc = document.getElementById('diff-desc');
             if (desc) desc.innerText = DIFFICULTY[name].desc;
         }
-        // Initialize default
         setDifficulty('medium');
 
-        /* --- Keyboard shortcuts: 1-4 to pick options, H to show hint --- */
+        function setAngleUnit(unit) {
+            angleUnit = unit;
+            document.querySelectorAll('#angle-toggle .seg-btn').forEach(b => b.classList.toggle('seg-active', b.dataset.unit === unit));
+        }
+        function setAnswerMode(mode) {
+            answerMode = mode;
+            document.querySelectorAll('#answer-toggle .seg-btn').forEach(b => b.classList.toggle('seg-active', b.dataset.mode === mode));
+        }
+        setAngleUnit('radians');
+        setAnswerMode('choice');
+
+        function degToDegStr(deg) { return `${deg}°`; }
+        function formatAngle(deg) { return angleUnit === 'degrees' ? degToDegStr(deg) : degToRadStr(deg); }
+
+        function normalizeAnswer(s) {
+            if (s == null) return '';
+            let t = String(s).trim();
+            if (/^undefined$/i.test(t) || /^und(ef)?$/i.test(t) || /^dne$/i.test(t)) return 'Undefined';
+            t = t.replace(/sqrt\s*\(?\s*/gi, '√');
+            t = t.replace(/\)/g, '');
+            t = t.replace(/r/gi, '√');
+            t = t.replace(/p/gi, 'π');
+            t = t.replace(/\s+/g, '');
+            if (t.startsWith('+')) t = t.slice(1);
+            return t;
+        }
+
+        function answersMatch(userInput, correct) {
+            return normalizeAnswer(userInput) === normalizeAnswer(correct);
+        }
+
+        function liveTransformInput(inputEl) {
+            const before = inputEl.value;
+            const caret = inputEl.selectionStart;
+            let after = before.replace(/r/gi, '√').replace(/p/gi, 'π');
+            if (after !== before) {
+                inputEl.value = after;
+                inputEl.setSelectionRange(caret, caret);
+            }
+        }
+
+        function padPress(ch) {
+            const input = document.getElementById('open-input');
+            if (input.disabled) return;
+            const start = input.selectionStart ?? input.value.length;
+            const end   = input.selectionEnd   ?? input.value.length;
+            const v = input.value;
+            input.value = v.slice(0, start) + ch + v.slice(end);
+            const newPos = start + ch.length;
+            input.setSelectionRange(newPos, newPos);
+            input.focus();
+        }
+        function padInsertWord(word) { padPress(word); }
+        function padBackspace() {
+            const input = document.getElementById('open-input');
+            if (input.disabled) return;
+            const start = input.selectionStart ?? input.value.length;
+            const end   = input.selectionEnd   ?? input.value.length;
+            const v = input.value;
+            if (start !== end) {
+                input.value = v.slice(0, start) + v.slice(end);
+                input.setSelectionRange(start, start);
+            } else if (start > 0) {
+                input.value = v.slice(0, start - 1) + v.slice(end);
+                input.setSelectionRange(start - 1, start - 1);
+            }
+            input.focus();
+        }
+        function setKeypadLocked(locked) {
+            const pad = document.getElementById('open-keypad');
+            if (pad) pad.classList.toggle('pad-locked', locked);
+        }
+
+        function openGraphMenu() { switchView('graphMenu'); }
+
+        function getActiveGraphTopics() {
+            const topics = [];
+            if (document.getElementById('gt-sincos').checked)  topics.push('sincos');
+            if (document.getElementById('gt-tancot').checked)  topics.push('tancot');
+            if (document.getElementById('gt-seccsc').checked)  topics.push('seccsc');
+            if (document.getElementById('gt-inverse').checked) topics.push('inverse');
+            return topics.length ? topics : ['sincos'];
+        }
+
+        function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+        function fracStr(num, den) {
+            if (den === 1) return String(num);
+            if (num === 0) return '0';
+            return `${num}/${den}`;
+        }
+        function piFracStr(num, den) {
+            if (num === 0) return '0';
+            const sign = num < 0 ? '-' : '';
+            num = Math.abs(num);
+            if (num === 1 && den === 1) return `${sign}π`;
+            if (den === 1) return `${sign}${num}π`;
+            if (num === 1) return `${sign}π/${den}`;
+            return `${sign}${num}π/${den}`;
+        }
+
+        function genSincos() {
+            const A = rand([1, 1, 2, 2, 3, -1, -2, -3]);
+            const B = rand([1, 1, 2, 1, 1, 3]);
+            const Cnum = rand([0, 0, 0, 1, -1]);
+            const Cden = rand([1, 2, 4]);
+            const D = rand([0, 0, 1, -1, 2, -2]);
+            const func = rand(['sin', 'cos']);
+
+            const phasePart = Cnum === 0 ? ''
+                : (Cnum > 0 ? ` - ${piFracStr(Cnum, Cden)}` : ` + ${piFracStr(-Cnum, Cden)}`);
+            const inside = (B === 1 ? 'x' : `${B}x`) + phasePart;
+            const ACoef = A === 1 ? '' : (A === -1 ? '-' : String(A));
+            const Dpart = D === 0 ? '' : (D > 0 ? ` + ${D}` : ` - ${Math.abs(D)}`);
+            const eq = `y = ${ACoef}${func}(${inside})${Dpart}`;
+
+            const qPool = [
+                { ask: 'amplitude', correct: String(Math.abs(A)) },
+                { ask: 'period',    correct: piFracStr(2, B) },
+                { ask: 'midline (y = ?)', correct: String(D) },
+                { ask: 'maximum value', correct: String(D + Math.abs(A)) },
+                { ask: 'minimum value', correct: String(D - Math.abs(A)) }
+            ];
+            if (Cnum !== 0 && B === 1) {
+                qPool.push({ ask: 'phase shift', correct: piFracStr(Cnum, Cden) });
+            }
+            const pick = rand(qPool);
+
+            const drawable = Math.abs(A) <= 3 && Math.abs(D) <= 2 && [1, 2, 3].includes(B) && Cnum === 0;
+            const showGraph = drawable && Math.random() < 0.5;
+            const svg = showGraph ? plotSinCos(func, A, B, 0, D) : null;
+
+            return {
+                qText: showGraph ? `What is the ${pick.ask}?` : `${eq} — ${pick.ask}?`,
+                eqText: showGraph ? eq : null,
+                correct: pick.correct,
+                svg: svg,
+                topic: 'sincos'
+            };
+        }
+
+        function genTancot() {
+            const A = rand([1, 1, 2, -1, -2]);
+            const B = rand([1, 2, 1, 3, 1]);
+            const func = rand(['tan', 'cot']);
+            const eq = `y = ${A === 1 ? '' : A === -1 ? '-' : A}${func}(${B === 1 ? 'x' : B + 'x'})`;
+            const qPool = [
+                { ask: 'period', correct: piFracStr(1, B) },
+                func === 'tan'
+                    ? { ask: 'first positive vertical asymptote (x = ?)', correct: piFracStr(1, 2 * B) }
+                    : { ask: 'first positive vertical asymptote (x = ?)', correct: piFracStr(1, B) }
+            ];
+            const pick = rand(qPool);
+            return { qText: `${eq} — ${pick.ask}?`, eqText: null, correct: pick.correct, svg: null, topic: 'tancot' };
+        }
+
+        function genSeccsc() {
+            const A = rand([1, 2, 3, -1, -2]);
+            const func = rand(['sec', 'csc']);
+            const eq = `y = ${A === 1 ? '' : A === -1 ? '-' : A}${func}(x)`;
+            const qPool = [
+                { ask: 'period', correct: '2π' },
+                func === 'sec'
+                    ? { ask: 'first positive vertical asymptote (x = ?)', correct: 'π/2' }
+                    : { ask: 'first positive vertical asymptote (x = ?)', correct: 'π' },
+                { ask: `range minimum of upper branch (y ≥ ?)`, correct: String(Math.abs(A)) }
+            ];
+            const pick = rand(qPool);
+            return { qText: `${eq} — ${pick.ask}?`, eqText: null, correct: pick.correct, svg: null, topic: 'seccsc' };
+        }
+
+        function genInverse() {
+            const items = [
+                { qText: 'arcsin(1) = ?',           correct: 'π/2' },
+                { qText: 'arcsin(-1) = ?',          correct: '-π/2' },
+                { qText: 'arcsin(0) = ?',           correct: '0' },
+                { qText: 'arcsin(1/2) = ?',         correct: 'π/6' },
+                { qText: 'arcsin(√2/2) = ?',        correct: 'π/4' },
+                { qText: 'arcsin(√3/2) = ?',        correct: 'π/3' },
+                { qText: 'arccos(1) = ?',           correct: '0' },
+                { qText: 'arccos(0) = ?',           correct: 'π/2' },
+                { qText: 'arccos(-1) = ?',          correct: 'π' },
+                { qText: 'arccos(1/2) = ?',         correct: 'π/3' },
+                { qText: 'arccos(√3/2) = ?',        correct: 'π/6' },
+                { qText: 'arctan(1) = ?',           correct: 'π/4' },
+                { qText: 'arctan(-1) = ?',          correct: '-π/4' },
+                { qText: 'arctan(0) = ?',           correct: '0' },
+                { qText: 'arctan(√3) = ?',          correct: 'π/3' },
+                { qText: 'arctan(√3/3) = ?',        correct: 'π/6' },
+                { qText: 'Largest value in range of arcsin(x)?',  correct: 'π/2' },
+                { qText: 'Smallest value in range of arcsin(x)?', correct: '-π/2' },
+                { qText: 'Largest value in range of arccos(x)?',  correct: 'π' },
+                { qText: 'Smallest value in range of arccos(x)?', correct: '0' },
+                { qText: 'Right boundary of arctan(x) range (open)?', correct: 'π/2' },
+                { qText: 'Left boundary of arctan(x) range (open)?',  correct: '-π/2' },
+                { qText: 'Right endpoint of domain of arcsin(x)?',  correct: '1' },
+                { qText: 'Left endpoint of domain of arccos(x)?',   correct: '-1' }
+            ];
+            const pick = rand(items);
+            return { qText: pick.qText, eqText: null, correct: pick.correct, svg: null, topic: 'inverse' };
+        }
+
+        function generateGraphQuestion() {
+            const topics = getActiveGraphTopics();
+            const topic = rand(topics);
+            const generators = { sincos: genSincos, tancot: genTancot, seccsc: genSeccsc, inverse: genInverse };
+            let q = generators[topic]();
+            
+            // Generate multiple choice options dynamically 
+            let pool = graphOptionFamilies.find(f => f.includes(q.correct));
+            if (!pool) {
+                // Fallback: If correct answer includes Pi, use the pi family, otherwise numbers
+                if (q.correct.includes('π')) pool = graphOptionFamilies[1];
+                else pool = graphOptionFamilies[0];
+            }
+            
+            let options = new Set([q.correct]);
+            let shuffledPool = shuffle([...pool]);
+            for (let opt of shuffledPool) {
+                if (options.size >= 4) break;
+                options.add(opt);
+            }
+            
+            // Fill any remaining space with completely random choices
+            let allOpts = [].concat(...graphOptionFamilies);
+            while (options.size < 4) {
+                let randomOpt = allOpts[Math.floor(Math.random() * allOpts.length)];
+                options.add(randomOpt);
+            }
+            
+            q.options = shuffle(Array.from(options));
+            return q;
+        }
+
+        function plotSinCos(func, A, B, C, D) {
+            const xMin = -Math.PI / 2, xMax = 4 * Math.PI;
+            const yMax = D + Math.abs(A) + 1;
+            const yMin = D - Math.abs(A) - 1;
+            const W = 320, H = 180, padL = 30, padR = 10, padT = 12, padB = 22;
+            const plotW = W - padL - padR, plotH = H - padT - padB;
+            const xToPx = x => padL + ((x - xMin) / (xMax - xMin)) * plotW;
+            const yToPx = y => padT + ((yMax - y) / (yMax - yMin)) * plotH;
+
+            const N = 240;
+            const pts = [];
+            for (let i = 0; i <= N; i++) {
+                const x = xMin + (xMax - xMin) * (i / N);
+                const y = A * Math[func](B * (x - C)) + D;
+                pts.push(`${xToPx(x).toFixed(1)},${yToPx(y).toFixed(1)}`);
+            }
+            const path = `M ${pts.join(' L ')}`;
+
+            const xLabels = [];
+            for (let k = 0; k <= 4; k++) {
+                const x = k * Math.PI;
+                if (x >= xMin && x <= xMax) {
+                    const px = xToPx(x);
+                    xLabels.push(`<text x="${px}" y="${H - 6}" text-anchor="middle" fill="rgb(148,163,184)" font-size="10" font-family="monospace">${k === 0 ? '0' : (k === 1 ? 'π' : k + 'π')}</text>`);
+                    xLabels.push(`<line x1="${px}" y1="${yToPx(0) - 3}" x2="${px}" y2="${yToPx(0) + 3}" stroke="rgb(100,116,139)" stroke-width="1"/>`);
+                }
+            }
+            const yLabels = [yMin + 1, D, yMax - 1].map(y => {
+                const py = yToPx(y);
+                return `<text x="${padL - 5}" y="${py + 3}" text-anchor="end" fill="rgb(148,163,184)" font-size="10" font-family="monospace">${y}</text>
+                        <line x1="${padL - 2}" y1="${py}" x2="${padL + 2}" y2="${py}" stroke="rgb(100,116,139)" stroke-width="1"/>`;
+            }).join('');
+
+            const axisY = yToPx(0);
+            const axisX = xToPx(0);
+
+            return `<svg viewBox="0 0 ${W} ${H}" class="graph-plot" xmlns="http://www.w3.org/2000/svg">
+                <line x1="${padL}" y1="${axisY}" x2="${W - padR}" y2="${axisY}" stroke="rgb(71,85,105)" stroke-width="1"/>
+                <line x1="${axisX}" y1="${padT}" x2="${axisX}" y2="${H - padB}" stroke="rgb(71,85,105)" stroke-width="1"/>
+                <line x1="${padL}" y1="${yToPx(D)}" x2="${W - padR}" y2="${yToPx(D)}" stroke="rgb(245,158,11)" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"/>
+                ${xLabels.join('')}
+                ${yLabels}
+                <path d="${path}" stroke="rgb(125,211,252)" stroke-width="2" fill="none"/>
+            </svg>`;
+        }
+
+        function startGraphGame() {
+            if (audioEnabled && audioCtx.state === 'suspended') audioCtx.resume();
+            state.gameType = 'graph';
+            state.mode = 'unlimited';
+            state.history = [];
+            state.locked = false;
+            state.active = true;
+            state.paused = false;
+            state.streak = 0;
+            state.drillSet = null;
+            state.recentKeys = [];
+            state.timeTotal = 0;
+
+            document.getElementById('header-subtitle').innerText = 'Graph Practice';
+            clearInterval(state.interval);
+            state.interval = setInterval(updateTimer, 1000);
+            updateTimer();
+
+            switchView('game');
+            renderNextQuestion();
+        }
+
         document.addEventListener('keydown', (e) => {
-            // Only active when the game view is on screen
             if (views.game.classList.contains('hidden')) return;
             if (e.repeat || state.locked || state.paused) return;
-            // Ignore when typing in an input (none in game view today, but defensive)
             const tag = (e.target && e.target.tagName) || '';
             if (tag === 'INPUT' || tag === 'TEXTAREA') return;
 
@@ -1024,7 +1577,7 @@
                     e.preventDefault();
                     btns[idx].click();
                 }
-            } else if ((e.key === 'h' || e.key === 'H') && state.mode === 'unlimited') {
+            } else if ((e.key === 'h' || e.key === 'H') && state.mode === 'unlimited' && answerMode !== 'open') {
                 const trigger = document.querySelector('#hint-area .hint-trigger');
                 if (trigger) {
                     e.preventDefault();
@@ -1033,7 +1586,6 @@
             }
         });
 
-        /* --- Hint controller (unlimited practice only) --- */
         function resetHint() {
             const area = document.getElementById('hint-area');
             if (state.mode !== 'unlimited') {
@@ -1042,20 +1594,27 @@
                 return;
             }
             area.classList.remove('hidden');
-            area.innerHTML = `<button type="button" class="hint-trigger" onclick="showHint()">💡 Need a hint? <span class="kbd-key">H</span></button>`;
+            const showHKey = answerMode !== 'open';
+            const kbdBadge = showHKey ? ' <span class="kbd-key">H</span>' : '';
+            area.innerHTML = `<button type="button" class="hint-trigger" onclick="showHint()">💡 Need a hint?${kbdBadge}</button>`;
         }
 
         function showHint() {
             if (!state.currentQ) return;
             const area = document.getElementById('hint-area');
-            const lines = getQuestionHint(state.currentQ.func, state.currentQ.deg);
-            const svg = buildUnitCircleSvg(state.currentQ.deg);
+            let lines, visualBlock = '';
+            if (state.gameType === 'graph') {
+                lines = getGraphQuestionHint(state.currentQ);
+            } else {
+                lines = getQuestionHint(state.currentQ.func, state.currentQ.deg);
+                visualBlock = `<div class="mb-3 pb-3 border-b border-amber-700/30">${buildUnitCircleSvg(state.currentQ.deg)}</div>`;
+            }
             area.innerHTML = `
                 <div class="hint-panel bg-amber-900/15 border border-amber-700/40 rounded-lg p-3">
                     <div class="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider mb-2">
                         <span>💡</span><span>Hint</span>
                     </div>
-                    <div class="mb-3 pb-3 border-b border-amber-700/30">${svg}</div>
+                    ${visualBlock}
                     <ul class="space-y-1.5 text-sm text-slate-300">
                         ${lines.map(l => `<li class="flex items-start gap-2"><span class="text-amber-500/70 mt-1 leading-none">•</span><span class="leading-snug">${l}</span></li>`).join('')}
                     </ul>
@@ -1068,59 +1627,141 @@
                 return endGame();
             }
 
-            state.currentQ = generateQuestion();
+            if (state.gameType === 'graph') {
+                state.currentQ = generateGraphQuestion();
+            } else {
+                state.currentQ = generateQuestion();
+            }
             state.locked = false;
 
-            document.getElementById('question-text').innerText = state.currentQ.text;
+            const qTextEl = document.getElementById('question-text');
+            if (state.gameType === 'graph') {
+                qTextEl.innerText = state.currentQ.qText;
+            } else {
+                const q = state.currentQ;
+                const angle = formatAngle(q.deg);
+                qTextEl.innerText = `${q.func}(${angle})`;
+                state.currentQ.text = `${q.func}(${angle})`;
+            }
+
+            const graphImgEl = document.getElementById('graph-image');
+            if (state.gameType === 'graph' && state.currentQ.svg) {
+                graphImgEl.innerHTML = state.currentQ.svg + (state.currentQ.eqText ? `<div class="text-center text-sm text-slate-300 font-mono mt-2">${state.currentQ.eqText}</div>` : '');
+                graphImgEl.classList.remove('hidden');
+            } else {
+                graphImgEl.classList.add('hidden');
+                graphImgEl.innerHTML = '';
+            }
 
             renderProgress();
             resetHint();
 
             const grid = document.getElementById('options-grid');
-            grid.innerHTML = '';
-            
-            state.currentQ.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "opt-btn btn-reactive relative bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 hover:border-sky-500 text-xl font-bold py-6 rounded-xl";
-                btn.dataset.value = opt;
-                btn.innerHTML = `<span class="kbd-hint">${idx + 1}</span>${opt}`;
-                btn.onclick = () => handleAnswer(opt, btn);
-                grid.appendChild(btn);
-            });
+            const openArea = document.getElementById('open-area');
+            const useOpen = answerMode === 'open';
 
-            // Animate the whole question stage in
+            if (useOpen) {
+                grid.classList.add('hidden');
+                grid.innerHTML = '';
+                openArea.classList.remove('hidden');
+                const input = document.getElementById('open-input');
+                const keypadEl = document.getElementById('open-keypad');
+                const metaEl = document.getElementById('open-meta');
+
+                if (isMobileOS) {
+                    keypadEl.classList.remove('hidden');
+                    metaEl.innerHTML = `Tap the keypad below · or type <span class="text-amber-300 font-bold">r</span> for √, <span class="text-amber-300 font-bold">p</span> for π`;
+                } else {
+                    keypadEl.classList.add('hidden');
+                    metaEl.innerHTML = `Type <span class="text-amber-300 font-bold">r</span> for √, <span class="text-amber-300 font-bold">p</span> for π · Press Enter to submit`;
+                }
+
+                input.value = '';
+                input.classList.remove('input-correct', 'input-wrong');
+                input.disabled = false;
+                setKeypadLocked(false);
+                
+                input.oninput = () => liveTransformInput(input);
+                input.onkeydown = (e) => {
+                    if (e.key === 'Enter' && !state.locked) {
+                        e.preventDefault();
+                        submitOpenAnswer();
+                    }
+                };
+                setTimeout(() => { if (state.active && !isMobileOS) input.focus(); }, 50);
+            } else {
+                openArea.classList.add('hidden');
+                grid.classList.remove('hidden');
+                grid.innerHTML = '';
+                state.currentQ.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "opt-btn btn-reactive relative bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 hover:border-sky-500 text-xl font-bold py-6 rounded-xl";
+                    btn.dataset.value = opt;
+                    btn.innerHTML = `<span class="kbd-hint">${idx + 1}</span>${opt}`;
+                    btn.onclick = () => handleAnswer(opt, btn);
+                    grid.appendChild(btn);
+                });
+            }
+
             const stage = document.getElementById('question-stage');
             stage.classList.remove('stage-exit', 'stage-enter');
             void stage.offsetWidth;
             stage.classList.add('stage-enter');
         }
 
+        function submitOpenAnswer() {
+            if (state.locked) return;
+            const input = document.getElementById('open-input');
+            const raw = input.value;
+            if (!raw.trim()) return;
+            const isCorrect = answersMatch(raw, state.currentQ.correct);
+            recordAnswer(normalizeAnswer(raw), isCorrect);
+            input.classList.add(isCorrect ? 'input-correct' : 'input-wrong');
+            input.disabled = true;
+            setKeypadLocked(true);
+            if (!isCorrect) {
+                document.getElementById('open-meta').innerHTML = `Correct: <span class="open-correct-reveal">${state.currentQ.correct}</span>`;
+            }
+            if (state.mode === 'unlimited') flashAccuracy(isCorrect);
+            const delay = isCorrect ? 750 : 1500;
+            setTimeout(() => {
+                if (!state.active) return;
+                const stage = document.getElementById('question-stage');
+                stage.classList.remove('stage-enter');
+                void stage.offsetWidth;
+                stage.classList.add('stage-exit');
+                setTimeout(() => renderNextQuestion(), 180);
+            }, delay);
+        }
+
+        function recordAnswer(selectedDisplay, isCorrect) {
+            const q = state.currentQ;
+            state.history.push({
+                question: q.text || q.qText,
+                selected: selectedDisplay,
+                correct: q.correct,
+                isRight: isCorrect,
+                func: q.func,
+                deg: q.deg,
+                topic: q.topic
+            });
+            if (isCorrect) {
+                state.streak++;
+                if (state.mode !== 'speed') playCorrect();
+            } else {
+                state.streak = 0;
+                if (state.mode !== 'speed') playWrong();
+            }
+        }
+
         function handleAnswer(selected, btnEl) {
             if (state.locked) return;
             const isCorrect = selected === state.currentQ.correct;
-
-            state.history.push({
-                question: state.currentQ.text,
-                selected: selected,
-                correct: state.currentQ.correct,
-                isRight: isCorrect,
-                func: state.currentQ.func,
-                deg: state.currentQ.deg
-            });
-
-            if (isCorrect) {
-                state.streak++;
-                if (state.mode !== 'speed') playCorrect(); // Only play sounds if not a test
-            } else {
-                state.streak = 0;
-                if (state.mode !== 'speed') playWrong(); // Only play sounds if not a test
-            }
-
+            recordAnswer(selected, isCorrect);
             if (state.mode === 'unlimited') {
                 flashAccuracy(isCorrect);
                 showFeedbackThenAdvance(selected, isCorrect);
             } else {
-                // Speed mode keeps its current snappy behavior and gives zero visual feedback until the end
                 renderNextQuestion();
             }
         }
@@ -1134,7 +1775,6 @@
             buttons.forEach(btn => {
                 btn.classList.add('opt-locked');
                 btn.disabled = true;
-                // Strip hover styling so it doesn't fight the feedback color
                 btn.classList.remove('hover:bg-slate-600', 'hover:border-sky-500');
                 const v = btn.dataset.value;
                 if (v === selected) {
@@ -1146,11 +1786,10 @@
                 }
             });
 
-            // Wrong answers linger a bit longer so the correct value can sink in
             const delay = isCorrect ? 750 : 1500;
 
             setTimeout(() => {
-                if (!state.active) return; // session was ended early
+                if (!state.active) return; 
                 const stage = document.getElementById('question-stage');
                 stage.classList.remove('stage-enter');
                 void stage.offsetWidth;
@@ -1187,7 +1826,6 @@
             document.getElementById('res-wrong').innerText = wrong;
             document.getElementById('res-time').innerText = `${avgTime}s`;
 
-            // Populate Mistakes
             const mistakesList = document.getElementById('mistakes-list');
             mistakesList.innerHTML = '';
             const mistakes = state.history.filter(h => !h.isRight);
@@ -1196,35 +1834,36 @@
                 mistakesList.innerHTML = '<div class="text-green-400 p-3 bg-slate-900 rounded-lg text-center font-bold border border-green-900/50">Flawless Run! 🎯</div>';
             } else {
                 mistakes.forEach((m, idx) => {
-                    const hint = getMistakeHint(m.func, m.deg, m.selected, m.correct);
+                    const hasUnitCircleContext = m.func !== undefined && m.deg !== undefined;
+                    const hint = hasUnitCircleContext
+                        ? getMistakeHint(m.func, m.deg, m.selected, m.correct)
+                        : (m.topic ? getGraphMistakeHint(m) : null);
                     const card = document.createElement('div');
                     card.className = 'mistake-card bg-slate-900 rounded-lg border border-slate-700 text-sm overflow-hidden';
                     card.style.animationDelay = `${idx * 60}ms`;
+                    const hintBlock = hint ? `
+                        <div class="flex items-start gap-2 px-3 pb-3 pt-2 border-t border-slate-800 text-xs text-slate-400">
+                            <span class="text-sky-400 font-bold leading-none">↳</span>
+                            <span class="italic leading-snug">${hint}</span>
+                        </div>` : '';
                     card.innerHTML = `
-                        <div class="flex justify-between items-center px-3 pt-3 pb-2">
-                            <span class="font-mono text-slate-300 font-bold">${m.question}</span>
-                            <div class="text-right flex items-center gap-2 font-mono">
+                        <div class="flex justify-between items-center px-3 pt-3 pb-2 gap-2">
+                            <span class="font-mono text-slate-300 font-bold text-xs flex-1 truncate">${m.question}</span>
+                            <div class="text-right flex items-center gap-2 font-mono shrink-0">
                                 <span class="text-red-400 font-bold">${m.selected}</span>
                                 <span class="text-slate-500">→</span>
                                 <span class="text-green-400 font-bold">${m.correct}</span>
                             </div>
                         </div>
-                        <div class="flex items-start gap-2 px-3 pb-3 pt-2 border-t border-slate-800 text-xs text-slate-400">
-                            <span class="text-sky-400 font-bold leading-none">↳</span>
-                            <span class="italic leading-snug">${hint}</span>
-                        </div>
+                        ${hintBlock}
                     `;
                     mistakesList.appendChild(card);
                 });
             }
 
-            // Per-function accuracy breakdown
             renderFunctionBreakdown();
-
-            // Action buttons (dynamic — drill misses appears only when there are misses)
             renderResultsActions(mistakes);
 
-            // Personal best for completed speed rounds (async, gracefully degrades)
             const pbEl = document.getElementById('pb-display');
             pbEl.classList.add('hidden');
             pbEl.innerHTML = '';
@@ -1232,7 +1871,7 @@
                 handleSpeedPB(timeElapsed, acc);
             }
 
-            if (total > 0 && state.mode !== 'speed') playFinish(); // Don't play fanfare on speed tests
+            if (total > 0 && state.mode !== 'speed') playFinish(); 
 
             switchView('results');
         }
@@ -1266,7 +1905,8 @@
         function renderResultsActions(mistakes) {
             const el = document.getElementById('results-actions');
             const homeBtn = `<button onclick="goHome()" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">Back to Menu</button>`;
-            if (!mistakes || mistakes.length === 0) {
+            const isGraphSession = state.gameType === 'graph';
+            if (!mistakes || mistakes.length === 0 || isGraphSession) {
                 el.innerHTML = homeBtn;
                 return;
             }
@@ -1275,17 +1915,12 @@
         }
 
         function buildDrillFamily(mistakes) {
-            // For each missed question, expand it into a family of structurally similar problems.
-            // Key dimensions:
-            //   - function pairing: tan/cot, sin/csc, cos/sec share structural properties (zeros, undefined points, signs)
-            //   - reference-angle category: axis (0/90), 30° family, 45° family, 60° family — each is a distinct skill group
             const reciprocalPairs = {
                 sin: ['sin', 'csc'], csc: ['sin', 'csc'],
                 cos: ['cos', 'sec'], sec: ['cos', 'sec'],
                 tan: ['tan', 'cot'], cot: ['tan', 'cot']
             };
 
-            // Base angles in each category. Axis = on the x or y axis (ref angle 0° or 90°).
             const angleCategories = {
                 axis: [0, 90, 180, 270, 360],
                 deg30: [30, 150, 210, 330],
@@ -1306,7 +1941,6 @@
                 return 'axis';
             }
 
-            // Use a Set for dedupe, with a "func@deg" key
             const set = new Set();
             const out = [];
             const add = (func, deg) => {
@@ -1325,9 +1959,7 @@
 
                 funcs.forEach(f => {
                     baseAngles.forEach(a => {
-                        // Always include the standard 0–360 version
                         add(f, a);
-                        // Mirror the original's negative/over-2π flavor so drill reflects difficulty
                         if (wasNegative && a !== 0) add(f, a - 360);
                         if (wasOver && a !== 0) add(f, a + 360);
                     });
