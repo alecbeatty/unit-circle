@@ -3,19 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trig Speed Demon</title>
+    <title>Unit Circle Practice</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-        
-        .fade-in { animation: fadeIn 0.2s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .btn-reactive { transition: all 0.1s; }
-        .btn-reactive:active { transform: scale(0.95); }
+        /* --- Smooth view fade --- */
+        .fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
 
-        /* Custom Scrollbar for mistakes list */
+        /* --- Question stage transitions --- */
+        .stage-enter { animation: stageEnter 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .stage-exit  { animation: stageExit  0.18s cubic-bezier(0.4, 0, 1, 1) both; }
+        @keyframes stageEnter {
+            from { opacity: 0; transform: translateY(12px) scale(0.985); }
+            to   { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+        @keyframes stageExit {
+            from { opacity: 1; transform: translateY(0)     scale(1); }
+            to   { opacity: 0; transform: translateY(-10px) scale(0.985); }
+        }
+
+        /* --- Button base & press --- */
+        .btn-reactive { transition: transform 0.1s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease; }
+        .btn-reactive:active { transform: scale(0.96); }
+
+        .opt-btn {
+            transition:
+                transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.25s ease,
+                border-color 0.25s ease,
+                color 0.25s ease,
+                box-shadow 0.25s ease,
+                opacity 0.25s ease;
+        }
+
+        /* --- Answer feedback states --- */
+        .answer-correct {
+            background-color: rgb(22, 163, 74) !important;
+            border-color: rgb(74, 222, 128) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 24px rgba(34, 197, 94, 0.45), 0 0 0 2px rgba(74, 222, 128, 0.4);
+            animation: correctPulse 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes correctPulse {
+            0%   { transform: scale(1); }
+            45%  { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
+
+        .answer-wrong {
+            background-color: rgb(220, 38, 38) !important;
+            border-color: rgb(248, 113, 113) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 24px rgba(239, 68, 68, 0.4);
+            animation: wrongShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            20%      { transform: translateX(-6px); }
+            40%      { transform: translateX(6px); }
+            60%      { transform: translateX(-4px); }
+            80%      { transform: translateX(3px); }
+        }
+
+        .answer-reveal {
+            background-color: rgba(34, 197, 94, 0.18) !important;
+            border-color: rgb(74, 222, 128) !important;
+            color: rgb(187, 247, 208) !important;
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.25);
+            animation: revealGlow 0.5s ease-out 0.1s both;
+        }
+        @keyframes revealGlow {
+            from { opacity: 0.4; transform: scale(0.98); }
+            to   { opacity: 1;   transform: scale(1); }
+        }
+
+        .answer-dim {
+            opacity: 0.35;
+            transform: scale(0.97);
+        }
+
+        .opt-locked { pointer-events: none; cursor: default; }
+
+        /* --- Progress / timer subtle update --- */
+        #game-progress, #game-timer {
+            transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* --- Mistakes scrollbar --- */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
@@ -28,7 +108,7 @@
         
         <div class="bg-slate-900 p-6 text-center border-b border-slate-700">
             <h1 class="text-3xl font-extrabold bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">
-                Trig Speed Demon
+                Unit Circle Practice
             </h1>
             <p id="header-subtitle" class="text-slate-400 mt-2 font-medium">Master the Unit Circle</p>
         </div>
@@ -62,18 +142,18 @@
                     <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">Speed Round Limits</h2>
                     <div class="flex space-x-4">
                         <div class="flex-1">
-                            <label class="block text-xs text-slate-400 mb-1">Time (sec)</label>
-                            <input type="number" id="cfg-time" value="300" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                            <label class="block text-xs text-slate-400 mb-1">Time (min)</label>
+                            <input type="number" id="cfg-time" value="5" min="0.5" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
                         </div>
                         <div class="flex-1">
                             <label class="block text-xs text-slate-400 mb-1">Questions</label>
-                            <input type="number" id="cfg-count" value="20" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                            <input type="number" id="cfg-count" value="20" min="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-3 pt-2">
-                    <button onclick="startGame('unlimited')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 transition-colors">
+                    <button onclick="startGame('unlimited')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-slate-700 hover:bg-slate-600 text-white border border-slate-500">
                         Endless Practice Mode
                     </button>
                     <button onclick="startGame('speed')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">
@@ -83,20 +163,20 @@
             </div>
         </div>
 
-        <div id="view-game" class="p-6 hidden flex flex-col h-full">
+        <div id="view-game" class="p-6 hidden flex-col h-full">
             <div class="flex justify-between items-center mb-8">
                 <div id="game-progress" class="text-slate-400 font-semibold tracking-wide">Q: 1</div>
                 <div id="game-timer" class="text-xl font-mono font-bold text-sky-400 bg-slate-900 px-4 py-1 rounded-lg border border-slate-700">00:00</div>
             </div>
 
-            <div class="flex-1 flex flex-col justify-center items-center py-8">
+            <div id="question-stage" class="flex-1 flex flex-col justify-center items-center py-8">
                 <div id="question-text" class="text-6xl font-extrabold tracking-tight mb-12">tan(5π/4)</div>
                 
                 <div id="options-grid" class="grid grid-cols-2 gap-4 w-full">
-                    </div>
+                </div>
             </div>
 
-            <button onclick="endGame()" class="mt-8 btn-reactive w-full py-3 rounded-lg font-bold text-slate-300 bg-slate-700/50 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/50 transition-colors">
+            <button onclick="endGame()" class="mt-8 btn-reactive w-full py-3 rounded-lg font-bold text-slate-300 bg-slate-700/50 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/50">
                 End Session Early
             </button>
         </div>
@@ -115,7 +195,7 @@
             <div class="mb-6">
                 <h3 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-3">Mistake Review</h3>
                 <div id="mistakes-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
-                    </div>
+                </div>
             </div>
 
             <button onclick="goHome()" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">
@@ -201,7 +281,8 @@
             interval: null,
             targetCount: 20,
             targetTime: 300,
-            currentQ: null
+            currentQ: null,
+            locked: false
         };
 
         function getActiveFunctions() {
@@ -250,16 +331,27 @@
         };
 
         function switchView(viewName) {
-            Object.values(views).forEach(v => v.classList.add('hidden'));
-            views[viewName].classList.remove('hidden');
-            views[viewName].classList.add('fade-in');
+            Object.values(views).forEach(v => {
+                v.classList.add('hidden');
+                v.classList.remove('flex');
+            });
+            const target = views[viewName];
+            target.classList.remove('hidden');
+            // The game view needs to be a flex column to space content + end button
+            if (viewName === 'game') target.classList.add('flex');
+            target.classList.remove('fade-in');
+            void target.offsetWidth;
+            target.classList.add('fade-in');
         }
 
         function startGame(mode) {
             state.mode = mode;
             state.history = [];
+            state.locked = false;
             state.targetCount = parseInt(document.getElementById('cfg-count').value) || 20;
-            state.targetTime = parseInt(document.getElementById('cfg-time').value) || 300;
+            // Time input is now in MINUTES — convert to seconds internally
+            const minutes = parseFloat(document.getElementById('cfg-time').value) || 5;
+            state.targetTime = Math.max(1, Math.round(minutes * 60));
             state.timeTotal = state.mode === 'speed' ? state.targetTime : 0;
             state.startTime = Date.now();
 
@@ -276,7 +368,7 @@
         function updateTimer() {
             if (state.mode === 'speed') {
                 state.timeTotal--;
-                if (state.timeTotal <= 0) endGame();
+                if (state.timeTotal <= 0) return endGame();
             } else {
                 state.timeTotal++;
             }
@@ -302,6 +394,8 @@
             }
 
             state.currentQ = generateQuestion();
+            state.locked = false;
+
             document.getElementById('question-text').innerText = state.currentQ.text;
             
             let progText = state.mode === 'speed' 
@@ -314,33 +408,80 @@
             
             state.currentQ.options.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = "btn-reactive bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 hover:border-sky-500 text-xl font-bold py-6 rounded-xl transition-all";
-                // Convert pure math strings to slightly prettier format
-                btn.innerText = opt; 
-                btn.onclick = () => handleAnswer(opt);
+                btn.className = "opt-btn btn-reactive bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 hover:border-sky-500 text-xl font-bold py-6 rounded-xl";
+                btn.dataset.value = opt;
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(opt, btn);
                 grid.appendChild(btn);
             });
-            
-            // Re-trigger animation
-            grid.classList.remove('fade-in');
-            void grid.offsetWidth; // trigger reflow
-            grid.classList.add('fade-in');
+
+            // Animate the whole question stage in
+            const stage = document.getElementById('question-stage');
+            stage.classList.remove('stage-exit', 'stage-enter');
+            void stage.offsetWidth;
+            stage.classList.add('stage-enter');
         }
 
-        function handleAnswer(selected) {
+        function handleAnswer(selected, btnEl) {
+            if (state.locked) return;
             const isCorrect = selected === state.currentQ.correct;
+
             state.history.push({
                 question: state.currentQ.text,
                 selected: selected,
                 correct: state.currentQ.correct,
                 isRight: isCorrect
             });
-            renderNextQuestion();
+
+            if (state.mode === 'unlimited') {
+                showFeedbackThenAdvance(selected, isCorrect);
+            } else {
+                // Speed mode keeps its current snappy behavior
+                renderNextQuestion();
+            }
+        }
+
+        function showFeedbackThenAdvance(selected, isCorrect) {
+            state.locked = true;
+            const grid = document.getElementById('options-grid');
+            const buttons = grid.querySelectorAll('button');
+            const correctVal = state.currentQ.correct;
+
+            buttons.forEach(btn => {
+                btn.classList.add('opt-locked');
+                // Strip hover styling so it doesn't fight the feedback color
+                btn.classList.remove('hover:bg-slate-600', 'hover:border-sky-500');
+                const v = btn.dataset.value;
+                if (v === selected) {
+                    btn.classList.add(isCorrect ? 'answer-correct' : 'answer-wrong');
+                } else if (v === correctVal && !isCorrect) {
+                    btn.classList.add('answer-reveal');
+                } else {
+                    btn.classList.add('answer-dim');
+                }
+            });
+
+            // Wrong answers linger a bit longer so the correct value can sink in
+            const delay = isCorrect ? 750 : 1500;
+
+            setTimeout(() => {
+                if (!state.interval) return; // session was ended early
+                const stage = document.getElementById('question-stage');
+                stage.classList.remove('stage-enter');
+                void stage.offsetWidth;
+                stage.classList.add('stage-exit');
+
+                setTimeout(() => {
+                    renderNextQuestion();
+                }, 180);
+            }, delay);
         }
 
         function endGame() {
             clearInterval(state.interval);
-            
+            state.interval = null;
+            state.locked = true;
+
             let total = state.history.length;
             if (total === 0) return goHome();
 
@@ -349,6 +490,7 @@
             let acc = Math.round((correct / total) * 100);
             
             let timeElapsed = state.mode === 'speed' ? (state.targetTime - state.timeTotal) : state.timeTotal;
+            if (timeElapsed < 0) timeElapsed = 0;
             let avgTime = (timeElapsed / total).toFixed(1);
 
             document.getElementById('res-score').innerText = `${acc}%`;
