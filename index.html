@@ -413,7 +413,7 @@
             </div>
 
             <div class="mb-6">
-                <h3 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-3">Engelhart's Post-Game Review</h3>
+                <h3 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-3">Engelhart Post-Game Review</h3>
                 <div id="mistakes-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
                 </div>
             </div>
@@ -766,7 +766,8 @@
             active: false,
             paused: false,
             streak: 0,
-            drillSet: null
+            drillSet: null,
+            recentKeys: []
         };
 
         function getActiveFunctions() {
@@ -778,19 +779,45 @@
         }
 
         function generateQuestion() {
-            let func, deg;
+            // Estimate pool size to size the cooldown buffer adaptively.
+            // Too-large cooldown on a small pool would cause infinite loops or starvation.
+            let poolSize;
             if (state.drillSet && state.drillSet.length > 0) {
-                const pick = state.drillSet[Math.floor(Math.random() * state.drillSet.length)];
-                func = pick.func;
-                deg = pick.deg;
+                poolSize = state.drillSet.length;
             } else {
-                const funcs = getActiveFunctions();
-                func = funcs[Math.floor(Math.random() * funcs.length)];
-                deg = baseAngles[Math.floor(Math.random() * baseAngles.length)];
+                const funcCount = getActiveFunctions().length;
                 const preset = DIFFICULTY[currentDifficulty] || DIFFICULTY.medium;
-                if (preset.neg > 0  && Math.random() < preset.neg)  deg -= 360;
-                if (preset.over > 0 && Math.random() < preset.over) deg += 360;
+                // baseAngles has 17 entries; multiply by ~variant count if neg/over enabled
+                let variants = 1;
+                if (preset.neg > 0)  variants += 1;
+                if (preset.over > 0) variants += 1;
+                poolSize = funcCount * baseAngles.length * variants;
             }
+            // Cooldown = avoid the last N questions. Keep it well below pool size.
+            const cooldown = Math.max(1, Math.min(8, Math.floor(poolSize / 2)));
+
+            let func, deg, key;
+            // Try up to 20 times to find a non-recent question, then accept whatever
+            for (let attempt = 0; attempt < 20; attempt++) {
+                if (state.drillSet && state.drillSet.length > 0) {
+                    const pick = state.drillSet[Math.floor(Math.random() * state.drillSet.length)];
+                    func = pick.func;
+                    deg = pick.deg;
+                } else {
+                    const funcs = getActiveFunctions();
+                    func = funcs[Math.floor(Math.random() * funcs.length)];
+                    deg = baseAngles[Math.floor(Math.random() * baseAngles.length)];
+                    const preset = DIFFICULTY[currentDifficulty] || DIFFICULTY.medium;
+                    if (preset.neg > 0  && Math.random() < preset.neg)  deg -= 360;
+                    if (preset.over > 0 && Math.random() < preset.over) deg += 360;
+                }
+                key = `${func}@${deg}`;
+                if (!state.recentKeys.includes(key)) break;
+            }
+
+            // Track this question; trim to cooldown size
+            state.recentKeys.push(key);
+            if (state.recentKeys.length > cooldown) state.recentKeys.shift();
 
             const radStr = degToRadStr(deg);
             const correctAns = getAnswer(func, deg);
@@ -845,6 +872,7 @@
             state.paused = false;
             state.streak = 0;
             state.drillSet = drillSet;
+            state.recentKeys = [];
             state.targetCount = parseInt(document.getElementById('cfg-count').value) || 20;
             // Time input is now in MINUTES — convert to seconds internally
             const minutes = parseFloat(document.getElementById('cfg-time').value) || 5;
@@ -854,7 +882,7 @@
 
             const subtitleEl = document.getElementById('header-subtitle');
             if (drillSet) {
-                subtitleEl.innerText = `Drilling ${drillSet.length} Miss${drillSet.length === 1 ? '' : 'es'}`;
+                subtitleEl.innerText = 'Targeted Practice';
             } else {
                 subtitleEl.innerText = mode === 'speed' ? 'Speed Round' : 'Unlimited Practice';
             }
@@ -1242,14 +1270,77 @@
                 el.innerHTML = homeBtn;
                 return;
             }
-            const drillBtn = `<button onclick="practiceMisses()" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-slate-700 hover:bg-slate-600 text-white border border-slate-500">Drill ${mistakes.length} Miss${mistakes.length === 1 ? '' : 'es'}</button>`;
+            const drillBtn = `<button onclick="practiceMisses()" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-slate-700 hover:bg-slate-600 text-white border border-slate-500">Practice Similar Problems</button>`;
             el.innerHTML = drillBtn + homeBtn;
+        }
+
+        function buildDrillFamily(mistakes) {
+            // For each missed question, expand it into a family of structurally similar problems.
+            // Key dimensions:
+            //   - function pairing: tan/cot, sin/csc, cos/sec share structural properties (zeros, undefined points, signs)
+            //   - reference-angle category: axis (0/90), 30° family, 45° family, 60° family — each is a distinct skill group
+            const reciprocalPairs = {
+                sin: ['sin', 'csc'], csc: ['sin', 'csc'],
+                cos: ['cos', 'sec'], sec: ['cos', 'sec'],
+                tan: ['tan', 'cot'], cot: ['tan', 'cot']
+            };
+
+            // Base angles in each category. Axis = on the x or y axis (ref angle 0° or 90°).
+            const angleCategories = {
+                axis: [0, 90, 180, 270, 360],
+                deg30: [30, 150, 210, 330],
+                deg45: [45, 135, 225, 315],
+                deg60: [60, 120, 240, 300]
+            };
+
+            function categoryOf(deg) {
+                const norm = ((deg % 360) + 360) % 360;
+                let ref = norm;
+                if (norm > 90 && norm <= 180) ref = 180 - norm;
+                else if (norm > 180 && norm <= 270) ref = norm - 180;
+                else if (norm > 270 && norm <= 360) ref = 360 - norm;
+                if (ref === 0 || ref === 90) return 'axis';
+                if (ref === 30) return 'deg30';
+                if (ref === 45) return 'deg45';
+                if (ref === 60) return 'deg60';
+                return 'axis';
+            }
+
+            // Use a Set for dedupe, with a "func@deg" key
+            const set = new Set();
+            const out = [];
+            const add = (func, deg) => {
+                const key = `${func}@${deg}`;
+                if (set.has(key)) return;
+                set.add(key);
+                out.push({ func, deg });
+            };
+
+            mistakes.forEach(m => {
+                const funcs = reciprocalPairs[m.func] || [m.func];
+                const cat = categoryOf(m.deg);
+                const baseAngles = angleCategories[cat];
+                const wasNegative = m.deg < 0;
+                const wasOver = m.deg >= 360;
+
+                funcs.forEach(f => {
+                    baseAngles.forEach(a => {
+                        // Always include the standard 0–360 version
+                        add(f, a);
+                        // Mirror the original's negative/over-2π flavor so drill reflects difficulty
+                        if (wasNegative && a !== 0) add(f, a - 360);
+                        if (wasOver && a !== 0) add(f, a + 360);
+                    });
+                });
+            });
+
+            return out;
         }
 
         function practiceMisses() {
             const mistakes = state.history.filter(h => !h.isRight);
             if (mistakes.length === 0) return goHome();
-            const drillSet = mistakes.map(m => ({ func: m.func, deg: m.deg }));
+            const drillSet = buildDrillFamily(mistakes);
             startGame('unlimited', drillSet);
         }
 
