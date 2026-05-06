@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trig Speed Demon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        
+        .fade-in { animation: fadeIn 0.2s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-reactive { transition: all 0.1s; }
+        .btn-reactive:active { transform: scale(0.95); }
+
+        /* Custom Scrollbar for mistakes list */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="w-full max-w-lg bg-slate-800 rounded-2xl shadow-2xl shadow-slate-900/50 overflow-hidden border border-slate-700 fade-in">
+        
+        <div class="bg-slate-900 p-6 text-center border-b border-slate-700">
+            <h1 class="text-3xl font-extrabold bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">
+                Trig Speed Demon
+            </h1>
+            <p id="header-subtitle" class="text-slate-400 mt-2 font-medium">Master the Unit Circle</p>
+        </div>
+
+        <div id="view-menu" class="p-6">
+            <div class="space-y-6">
+                <div class="bg-slate-700/50 rounded-xl p-4 space-y-4 border border-slate-600">
+                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">Question Settings</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="cfg-basic" checked class="w-5 h-5 accent-sky-500 rounded">
+                            <span class="text-slate-200">sin, cos, tan</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="cfg-recip" checked class="w-5 h-5 accent-sky-500 rounded">
+                            <span class="text-slate-200">csc, sec, cot</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="cfg-neg" checked class="w-5 h-5 accent-sky-500 rounded">
+                            <span class="text-slate-200">Include Negatives</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="cfg-over" class="w-5 h-5 accent-sky-500 rounded">
+                            <span class="text-slate-200">Include > 2π</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
+                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">Speed Round Limits</h2>
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label class="block text-xs text-slate-400 mb-1">Time (sec)</label>
+                            <input type="number" id="cfg-time" value="300" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-xs text-slate-400 mb-1">Questions</label>
+                            <input type="number" id="cfg-count" value="20" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 pt-2">
+                    <button onclick="startGame('unlimited')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 transition-colors">
+                        Endless Practice Mode
+                    </button>
+                    <button onclick="startGame('speed')" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">
+                        Start Speed Round
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-game" class="p-6 hidden flex flex-col h-full">
+            <div class="flex justify-between items-center mb-8">
+                <div id="game-progress" class="text-slate-400 font-semibold tracking-wide">Q: 1</div>
+                <div id="game-timer" class="text-xl font-mono font-bold text-sky-400 bg-slate-900 px-4 py-1 rounded-lg border border-slate-700">00:00</div>
+            </div>
+
+            <div class="flex-1 flex flex-col justify-center items-center py-8">
+                <div id="question-text" class="text-6xl font-extrabold tracking-tight mb-12">tan(5π/4)</div>
+                
+                <div id="options-grid" class="grid grid-cols-2 gap-4 w-full">
+                    </div>
+            </div>
+
+            <button onclick="endGame()" class="mt-8 btn-reactive w-full py-3 rounded-lg font-bold text-slate-300 bg-slate-700/50 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/50 transition-colors">
+                End Session Early
+            </button>
+        </div>
+
+        <div id="view-results" class="p-6 hidden">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white mb-2">Round Complete</h2>
+                <div id="res-score" class="text-5xl font-extrabold text-sky-400 my-4">95%</div>
+                <div class="grid grid-cols-3 gap-2 text-sm font-medium text-slate-400 bg-slate-900 p-3 rounded-xl border border-slate-700">
+                    <div><span id="res-correct" class="text-green-400 text-lg block">19</span>Correct</div>
+                    <div><span id="res-wrong" class="text-red-400 text-lg block">1</span>Wrong</div>
+                    <div><span id="res-time" class="text-indigo-400 text-lg block">2.4s</span>Avg Time</div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-3">Mistake Review</h3>
+                <div id="mistakes-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
+                    </div>
+            </div>
+
+            <button onclick="goHome()" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">
+                Back to Menu
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        /* --- MATH & UNIT CIRCLE ENGINE --- */
+        const baseVals = {
+            0:  { sin: '0', cos: '1', tan: '0', cot: 'Undefined', sec: '1', csc: 'Undefined' },
+            30: { sin: '1/2', cos: '√3/2', tan: '√3/3', cot: '√3', sec: '2√3/3', csc: '2' },
+            45: { sin: '√2/2', cos: '√2/2', tan: '1', cot: '1', sec: '√2', csc: '√2' },
+            60: { sin: '√3/2', cos: '1/2', tan: '√3', cot: '√3/3', sec: '2', csc: '2√3/3' },
+            90: { sin: '1', cos: '0', tan: 'Undefined', cot: '0', sec: 'Undefined', csc: '1' }
+        };
+
+        const baseAngles = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330, 360];
+
+        // Strategic distractor packages - forces user to read carefully
+        const optionFamilies = [
+            ['√3/3', '-√3/3', '√3', '-√3'],
+            ['1/2', '-1/2', '√3/2', '-√3/2', '2', '-2', '2√3/3', '-2√3/3'],
+            ['√2/2', '-√2/2', '√2', '-√2', '1', '-1'],
+            ['0', 'Undefined', '1', '-1']
+        ];
+
+        function degToRadStr(deg) {
+            if (deg === 0) return "0";
+            let isNeg = deg < 0;
+            deg = Math.abs(deg);
+            
+            let gcd = (a, b) => b ? gcd(b, a % b) : a;
+            let divisor = gcd(deg, 180);
+            let n = deg / divisor;
+            let d = 180 / divisor;
+
+            let str = isNeg ? "-" : "";
+            if (n === 1 && d === 1) return str + "π";
+            if (d === 1) return str + n + "π";
+            if (n === 1) return str + "π/" + d;
+            return str + n + "π/" + d;
+        }
+
+        function getAnswer(func, deg) {
+            let norm = ((deg % 360) + 360) % 360;
+            let ref = norm;
+            if (norm > 90 && norm <= 180) ref = 180 - norm;
+            else if (norm > 180 && norm <= 270) ref = norm - 180;
+            else if (norm > 270 && norm <= 360) ref = 360 - norm;
+
+            let base = baseVals[ref][func];
+            if (base === '0' || base === 'Undefined') return base;
+
+            let rad = norm * Math.PI / 180;
+            let x_sign = Math.cos(rad) > 0.0001 ? 1 : (Math.cos(rad) < -0.0001 ? -1 : 0);
+            let y_sign = Math.sin(rad) > 0.0001 ? 1 : (Math.sin(rad) < -0.0001 ? -1 : 0);
+
+            let sign = 1;
+            if (func === 'sin' || func === 'csc') sign = y_sign;
+            if (func === 'cos' || func === 'sec') sign = x_sign;
+            if (func === 'tan' || func === 'cot') sign = x_sign * y_sign;
+
+            return (sign === -1 ? '-' : '') + base;
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        /* --- GAME STATE --- */
+        let state = {
+            mode: 'unlimited', 
+            history: [],
+            startTime: null,
+            timeTotal: 0,
+            interval: null,
+            targetCount: 20,
+            targetTime: 300,
+            currentQ: null
+        };
+
+        function getActiveFunctions() {
+            let funcs = [];
+            if (document.getElementById('cfg-basic').checked) funcs.push('sin', 'cos', 'tan');
+            if (document.getElementById('cfg-recip').checked) funcs.push('csc', 'sec', 'cot');
+            if (funcs.length === 0) funcs = ['sin']; // Fallback
+            return funcs;
+        }
+
+        function generateQuestion() {
+            const funcs = getActiveFunctions();
+            const func = funcs[Math.floor(Math.random() * funcs.length)];
+            let deg = baseAngles[Math.floor(Math.random() * baseAngles.length)];
+
+            if (document.getElementById('cfg-neg').checked && Math.random() < 0.4) deg -= 360;
+            if (document.getElementById('cfg-over').checked && Math.random() < 0.3) deg += 360;
+
+            const radStr = degToRadStr(deg);
+            const correctAns = getAnswer(func, deg);
+
+            // Generate strategic options
+            let pool = optionFamilies.find(f => f.includes(correctAns)) || optionFamilies[0];
+            pool = shuffle([...pool]);
+            
+            let options = new Set([correctAns]);
+            for(let opt of pool) {
+                if(options.size >= 4) break;
+                options.add(opt);
+            }
+            
+            // If pool was too small, grab randoms to fill
+            let allOpts = [].concat(...optionFamilies);
+            while(options.size < 4) {
+                options.add(allOpts[Math.floor(Math.random() * allOpts.length)]);
+            }
+
+            return { text: `${func}(${radStr})`, correct: correctAns, options: shuffle(Array.from(options)) };
+        }
+
+        /* --- UI CONTROLLERS --- */
+        const views = {
+            menu: document.getElementById('view-menu'),
+            game: document.getElementById('view-game'),
+            results: document.getElementById('view-results')
+        };
+
+        function switchView(viewName) {
+            Object.values(views).forEach(v => v.classList.add('hidden'));
+            views[viewName].classList.remove('hidden');
+            views[viewName].classList.add('fade-in');
+        }
+
+        function startGame(mode) {
+            state.mode = mode;
+            state.history = [];
+            state.targetCount = parseInt(document.getElementById('cfg-count').value) || 20;
+            state.targetTime = parseInt(document.getElementById('cfg-time').value) || 300;
+            state.timeTotal = state.mode === 'speed' ? state.targetTime : 0;
+            state.startTime = Date.now();
+
+            document.getElementById('header-subtitle').innerText = mode === 'speed' ? 'Speed Round' : 'Unlimited Practice';
+            
+            clearInterval(state.interval);
+            state.interval = setInterval(updateTimer, 1000);
+            updateTimer(); // instant update
+            
+            switchView('game');
+            renderNextQuestion();
+        }
+
+        function updateTimer() {
+            if (state.mode === 'speed') {
+                state.timeTotal--;
+                if (state.timeTotal <= 0) endGame();
+            } else {
+                state.timeTotal++;
+            }
+            
+            const mins = Math.floor(Math.abs(state.timeTotal) / 60).toString().padStart(2, '0');
+            const secs = (Math.abs(state.timeTotal) % 60).toString().padStart(2, '0');
+            
+            const timerEl = document.getElementById('game-timer');
+            timerEl.innerText = `${mins}:${secs}`;
+            
+            if (state.mode === 'speed' && state.timeTotal <= 10) {
+                timerEl.classList.add('text-red-500', 'border-red-500');
+                timerEl.classList.remove('text-sky-400', 'border-slate-700');
+            } else {
+                timerEl.classList.remove('text-red-500', 'border-red-500');
+                timerEl.classList.add('text-sky-400', 'border-slate-700');
+            }
+        }
+
+        function renderNextQuestion() {
+            if (state.mode === 'speed' && state.history.length >= state.targetCount) {
+                return endGame();
+            }
+
+            state.currentQ = generateQuestion();
+            document.getElementById('question-text').innerText = state.currentQ.text;
+            
+            let progText = state.mode === 'speed' 
+                ? `Q: ${state.history.length + 1} / ${state.targetCount}` 
+                : `Q: ${state.history.length + 1}`;
+            document.getElementById('game-progress').innerText = progText;
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            state.currentQ.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "btn-reactive bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 hover:border-sky-500 text-xl font-bold py-6 rounded-xl transition-all";
+                // Convert pure math strings to slightly prettier format
+                btn.innerText = opt; 
+                btn.onclick = () => handleAnswer(opt);
+                grid.appendChild(btn);
+            });
+            
+            // Re-trigger animation
+            grid.classList.remove('fade-in');
+            void grid.offsetWidth; // trigger reflow
+            grid.classList.add('fade-in');
+        }
+
+        function handleAnswer(selected) {
+            const isCorrect = selected === state.currentQ.correct;
+            state.history.push({
+                question: state.currentQ.text,
+                selected: selected,
+                correct: state.currentQ.correct,
+                isRight: isCorrect
+            });
+            renderNextQuestion();
+        }
+
+        function endGame() {
+            clearInterval(state.interval);
+            
+            let total = state.history.length;
+            if (total === 0) return goHome();
+
+            let correct = state.history.filter(h => h.isRight).length;
+            let wrong = total - correct;
+            let acc = Math.round((correct / total) * 100);
+            
+            let timeElapsed = state.mode === 'speed' ? (state.targetTime - state.timeTotal) : state.timeTotal;
+            let avgTime = (timeElapsed / total).toFixed(1);
+
+            document.getElementById('res-score').innerText = `${acc}%`;
+            document.getElementById('res-correct').innerText = correct;
+            document.getElementById('res-wrong').innerText = wrong;
+            document.getElementById('res-time').innerText = `${avgTime}s`;
+
+            // Populate Mistakes
+            const mistakesList = document.getElementById('mistakes-list');
+            mistakesList.innerHTML = '';
+            const mistakes = state.history.filter(h => !h.isRight);
+            
+            if (mistakes.length === 0) {
+                mistakesList.innerHTML = '<div class="text-green-400 p-3 bg-slate-900 rounded-lg text-center font-bold border border-green-900/50">Flawless Run! 🎯</div>';
+            } else {
+                mistakes.forEach(m => {
+                    mistakesList.innerHTML += `
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 flex justify-between items-center text-sm">
+                            <span class="font-mono text-slate-300 font-bold">${m.question}</span>
+                            <div class="text-right">
+                                <span class="text-red-400 line-through mr-2">${m.selected}</span>
+                                <span class="text-green-400 font-bold">${m.correct}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            switchView('results');
+        }
+
+        function goHome() {
+            document.getElementById('header-subtitle').innerText = 'Master the Unit Circle';
+            switchView('menu');
+        }
+    </script>
+</body>
+</html>
