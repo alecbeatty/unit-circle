@@ -95,18 +95,203 @@
             transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
         }
 
+        /* --- Accuracy arrow + percentage flash --- */
+        .acc-arrow {
+            display: inline-block;
+            margin-left: 0.4rem;
+            min-width: 0.9em;
+            font-weight: 800;
+            font-size: 1.05em;
+            line-height: 1;
+        }
+        .acc-arrow-up {
+            color: rgb(74, 222, 128);
+            text-shadow: 0 0 12px rgba(74, 222, 128, 0.55);
+            animation: arrowUpPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .acc-arrow-down {
+            color: rgb(248, 113, 113);
+            text-shadow: 0 0 12px rgba(248, 113, 113, 0.5);
+            animation: arrowDownPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes arrowUpPop {
+            0%   { opacity: 0; transform: translateY(10px) scale(0.5); }
+            55%  { opacity: 1; transform: translateY(-3px) scale(1.2); }
+            100% { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+        @keyframes arrowDownPop {
+            0%   { opacity: 0; transform: translateY(-10px) scale(0.5); }
+            55%  { opacity: 1; transform: translateY(3px)   scale(1.2); }
+            100% { opacity: 1; transform: translateY(0)     scale(1); }
+        }
+
+        #prog-pct { display: inline-block; transition: color 0.3s ease; }
+        .pct-flash-green { animation: pctFlashGreen 0.7s ease-out; }
+        .pct-flash-red   { animation: pctFlashRed   0.7s ease-out; }
+        @keyframes pctFlashGreen {
+            0%   { color: rgb(74, 222, 128); transform: scale(1.18); text-shadow: 0 0 14px rgba(74, 222, 128, 0.55); }
+            100% { color: rgb(125, 211, 252); transform: scale(1); text-shadow: none; }
+        }
+        @keyframes pctFlashRed {
+            0%   { color: rgb(248, 113, 113); transform: scale(1.18); text-shadow: 0 0 14px rgba(248, 113, 113, 0.5); }
+            100% { color: rgb(125, 211, 252); transform: scale(1); text-shadow: none; }
+        }
+
         /* --- Mistakes scrollbar --- */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* --- Mistake card stagger --- */
+        .mistake-card {
+            opacity: 0;
+            animation: mistakeCardIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes mistakeCardIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* --- Hint panel --- */
+        .hint-trigger {
+            display: block;
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgb(148, 163, 184);
+            border: 1px dashed rgb(51, 65, 85);
+            background: transparent;
+            transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+            cursor: pointer;
+        }
+        .hint-trigger:hover {
+            color: rgb(252, 211, 77);
+            border-color: rgba(245, 158, 11, 0.5);
+            background-color: rgba(245, 158, 11, 0.05);
+        }
+        .hint-panel {
+            animation: hintPanelIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes hintPanelIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Timer paused state --- */
+        #game-timer.timer-paused {
+            color: rgb(148, 163, 184) !important;
+            border-color: rgb(71, 85, 105) !important;
+            animation: pausedPulse 1.6s ease-in-out infinite;
+        }
+        @keyframes pausedPulse {
+            0%, 100% { opacity: 0.55; }
+            50%      { opacity: 1; }
+        }
+
+        /* --- Streak badge --- */
+        .streak-badge {
+            display: inline-block;
+            margin-left: 0.55rem;
+            color: rgb(251, 146, 60);
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(251, 146, 60, 0.4);
+            animation: streakPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .streak-hot { text-shadow: 0 0 14px rgba(251, 146, 60, 0.7); }
+        @keyframes streakPop {
+            0%   { opacity: 0; transform: scale(0.6); }
+            60%  { opacity: 1; transform: scale(1.18); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- Keyboard hint glyph on option buttons --- */
+        .kbd-hint {
+            position: absolute;
+            top: 6px;
+            left: 8px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: rgb(148, 163, 184);
+            background: rgba(15, 23, 42, 0.75);
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px solid rgb(71, 85, 105);
+            line-height: 1.3;
+            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .opt-btn.answer-correct .kbd-hint,
+        .opt-btn.answer-wrong .kbd-hint,
+        .opt-btn.answer-reveal .kbd-hint,
+        .opt-btn.answer-dim .kbd-hint { opacity: 0; }
+
+        .kbd-key {
+            display: inline-block;
+            margin-left: 0.4rem;
+            padding: 0px 6px;
+            font-size: 0.7rem;
+            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+            color: rgb(148, 163, 184);
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgb(71, 85, 105);
+            border-radius: 3px;
+            line-height: 1.4;
+        }
+
+        /* --- Per-function accuracy breakdown --- */
+        .func-row {
+            opacity: 0;
+            animation: funcRowIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes funcRowIn {
+            from { opacity: 0; transform: translateX(-6px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        .func-bar-fill {
+            width: 0;
+            animation: barFill 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+        }
+        @keyframes barFill {
+            from { width: 0; }
+            to   { width: var(--bar-width, 0%); }
+        }
+
+        /* --- Personal best display --- */
+        .pb-card {
+            animation: pbIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes pbIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .pb-new {
+            color: rgb(74, 222, 128);
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+        }
+
+        /* --- Unit circle SVG --- */
+        .unit-circle-svg {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            margin: 0 auto;
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
     <div id="app" class="w-full max-w-lg bg-slate-800 rounded-2xl shadow-2xl shadow-slate-900/50 overflow-hidden border border-slate-700 fade-in">
         
-        <div class="bg-slate-900 p-6 text-center border-b border-slate-700">
+        <div class="bg-slate-900 p-6 text-center border-b border-slate-700 relative">
+            <button id="audio-toggle" type="button" onclick="toggleAudio()"
+                class="btn-reactive absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-lg text-base bg-slate-800 hover:bg-slate-700 border border-slate-700"
+                aria-label="Toggle sound">🔊</button>
             <h1 class="text-3xl font-extrabold bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">
                 Unit Circle Practice
             </h1>
@@ -176,13 +361,15 @@
                 </div>
             </div>
 
-            <button onclick="endGame()" class="mt-8 btn-reactive w-full py-3 rounded-lg font-bold text-slate-300 bg-slate-700/50 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/50">
+            <div id="hint-area" class="hidden mb-3"></div>
+
+            <button onclick="endGame()" class="btn-reactive w-full py-3 rounded-lg font-bold text-slate-300 bg-slate-700/50 hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/50">
                 End Session Early
             </button>
         </div>
 
         <div id="view-results" class="p-6 hidden">
-            <div class="text-center mb-8">
+            <div class="text-center mb-6">
                 <h2 class="text-3xl font-bold text-white mb-2">Round Complete</h2>
                 <div id="res-score" class="text-5xl font-extrabold text-sky-400 my-4">95%</div>
                 <div class="grid grid-cols-3 gap-2 text-sm font-medium text-slate-400 bg-slate-900 p-3 rounded-xl border border-slate-700">
@@ -192,17 +379,26 @@
                 </div>
             </div>
 
+            <div id="pb-display" class="hidden mb-6"></div>
+
+            <div id="func-breakdown" class="mb-6 hidden">
+                <h3 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-3">By Function</h3>
+                <div id="func-rows" class="space-y-2"></div>
+            </div>
+
             <div class="mb-6">
                 <h3 class="text-slate-400 font-bold uppercase tracking-wider text-xs mb-3">Mistake Review</h3>
                 <div id="mistakes-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
                 </div>
             </div>
 
-            <button onclick="goHome()" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">
-                Back to Menu
-            </button>
+            <div id="results-actions" class="grid grid-cols-1 gap-2"></div>
         </div>
 
+    </div>
+
+    <div class="mt-8 text-center text-slate-500 text-sm font-medium tracking-wide">
+        &copy; 2026 Alec Beatty. All rights reserved.
     </div>
 
     <script>
@@ -272,6 +468,264 @@
             return array;
         }
 
+        /* --- HINT ENGINE for mistake review --- */
+        function getQuadrantInfo(deg) {
+            const norm = ((deg % 360) + 360) % 360;
+            if (norm === 0 || norm === 180 || norm === 360) return { quad: null, axis: 'x' };
+            if (norm === 90 || norm === 270) return { quad: null, axis: 'y' };
+            if (norm < 90) return { quad: 1, axis: null };
+            if (norm < 180) return { quad: 2, axis: null };
+            if (norm < 270) return { quad: 3, axis: null };
+            return { quad: 4, axis: null };
+        }
+
+        function getReferenceAngleDeg(deg) {
+            const norm = ((deg % 360) + 360) % 360;
+            if (norm <= 90) return norm;
+            if (norm <= 180) return 180 - norm;
+            if (norm <= 270) return norm - 180;
+            return 360 - norm;
+        }
+
+        function getMistakeHint(func, deg, selected, correct) {
+            const { quad, axis } = getQuadrantInfo(deg);
+            const ref = getReferenceAngleDeg(deg);
+            const stripSign = s => s.replace(/^-/, '');
+
+            // 1. Pure sign error — same magnitude, wrong sign
+            if (correct !== 'Undefined' && selected !== 'Undefined' &&
+                correct !== '0' && stripSign(selected) === stripSign(correct) &&
+                selected !== correct && quad) {
+                const correctSign = correct.startsWith('-') ? 'negative' : 'positive';
+                return `Right magnitude, wrong sign — ${func} is ${correctSign} in Q${quad}`;
+            }
+
+            // 2. Reciprocal confusion — picked the value of the reciprocal function
+            const reciprocals = { sin: 'csc', csc: 'sin', cos: 'sec', sec: 'cos', tan: 'cot', cot: 'tan' };
+            const recipFunc = reciprocals[func];
+            if (recipFunc) {
+                const recipAns = getAnswer(recipFunc, deg);
+                if (selected === recipAns && recipAns !== correct) {
+                    return `That's ${recipFunc} of the same angle — ${func} and ${recipFunc} are reciprocals`;
+                }
+            }
+
+            // 3. Cofunction confusion — picked the value of the cofunction
+            const cofunctions = { sin: 'cos', cos: 'sin', tan: 'cot', cot: 'tan', sec: 'csc', csc: 'sec' };
+            const cofunc = cofunctions[func];
+            if (cofunc) {
+                const cofuncAns = getAnswer(cofunc, deg);
+                if (selected === cofuncAns && cofuncAns !== correct) {
+                    return `That's ${cofunc} of the same angle — don't mix up ${func} and ${cofunc}`;
+                }
+            }
+
+            // 4. Target answer is undefined
+            if (correct === 'Undefined') {
+                if (func === 'tan' || func === 'sec') {
+                    return `${func} is undefined where cos = 0 (π/2 and 3π/2)`;
+                }
+                if (func === 'cot' || func === 'csc') {
+                    return `${func} is undefined where sin = 0 (0 and π)`;
+                }
+            }
+
+            // 5. User picked Undefined when it shouldn't be
+            if (selected === 'Undefined' && correct !== 'Undefined') {
+                return `Not undefined here — the denominator isn't zero at this angle`;
+            }
+
+            // 6. Axis position context
+            if (axis === 'x') {
+                return `On the x-axis: sin = 0, cos = ±1, tan = 0`;
+            }
+            if (axis === 'y') {
+                return `On the y-axis: cos = 0, sin = ±1, tan undefined`;
+            }
+
+            // 7. Default: reference angle + quadrant
+            return `Reference angle is ${degToRadStr(ref)} in Q${quad}`;
+        }
+
+        function getQuestionHint(func, deg) {
+            const { quad, axis } = getQuadrantInfo(deg);
+            const ref = getReferenceAngleDeg(deg);
+            const norm = ((deg % 360) + 360) % 360;
+
+            const definitions = {
+                sin: 'sin θ = y-coordinate on the unit circle',
+                cos: 'cos θ = x-coordinate on the unit circle',
+                tan: 'tan θ = sin θ / cos θ = y / x',
+                cot: 'cot θ = cos θ / sin θ = x / y',
+                sec: 'sec θ = 1 / cos θ',
+                csc: 'csc θ = 1 / sin θ'
+            };
+            const signRules = {
+                1: 'all six functions are positive',
+                2: 'sin & csc positive, the rest negative',
+                3: 'tan & cot positive, the rest negative',
+                4: 'cos & sec positive, the rest negative'
+            };
+
+            const lines = [definitions[func]];
+
+            if (axis === 'x') {
+                lines.push(`${degToRadStr(norm)} sits on the x-axis (point is (±1, 0)).`);
+                lines.push(`So sin = 0, cos = ±1, tan = 0, and sec/csc/cot involve dividing by 0 in some cases.`);
+            } else if (axis === 'y') {
+                lines.push(`${degToRadStr(norm)} sits on the y-axis (point is (0, ±1)).`);
+                lines.push(`So cos = 0, sin = ±1 — anything dividing by cos (tan, sec) is undefined here.`);
+            } else {
+                lines.push(`${degToRadStr(norm)} lands in Quadrant ${quad}, where ${signRules[quad]}.`);
+                lines.push(`Reference angle: ${degToRadStr(ref)}.`);
+                const refVal = baseVals[ref] && baseVals[ref][func];
+                if (refVal && refVal !== 'Undefined' && refVal !== '0') {
+                    lines.push(`At the reference angle, |${func}| = ${refVal} — then apply the Q${quad} sign.`);
+                }
+            }
+
+            return lines;
+        }
+
+        /* --- Helpers for stats, time formatting, and the unit circle SVG --- */
+        function formatTime(sec) {
+            sec = Math.max(0, Math.round(sec));
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function getFunctionStats(history) {
+            const byFunc = {};
+            history.forEach(h => {
+                if (!byFunc[h.func]) byFunc[h.func] = { correct: 0, total: 0 };
+                byFunc[h.func].total++;
+                if (h.isRight) byFunc[h.func].correct++;
+            });
+            // Order: sin, cos, tan, csc, sec, cot — only ones used
+            const order = ['sin', 'cos', 'tan', 'csc', 'sec', 'cot'];
+            return order.filter(f => byFunc[f]).map(f => ({
+                func: f,
+                correct: byFunc[f].correct,
+                total: byFunc[f].total,
+                pct: Math.round((byFunc[f].correct / byFunc[f].total) * 100)
+            }));
+        }
+
+        function accColor(pct) {
+            if (pct >= 90) return 'rgb(74, 222, 128)';   // green
+            if (pct >= 70) return 'rgb(250, 204, 21)';   // amber
+            return 'rgb(248, 113, 113)';                  // red
+        }
+
+        function buildUnitCircleSvg(deg) {
+            const norm = ((deg % 360) + 360) % 360;
+            const rad = norm * Math.PI / 180;
+            const R = 70;
+            const px = R * Math.cos(rad);
+            const py = -R * Math.sin(rad); // SVG y is inverted
+
+            const cosStr = getAnswer('cos', deg);
+            const sinStr = getAnswer('sin', deg);
+
+            const arcR = 22;
+            const arcEndX = arcR * Math.cos(rad);
+            const arcEndY = -arcR * Math.sin(rad);
+            const largeArc = norm > 180 ? 1 : 0;
+            const arcPath = norm < 1 ? '' :
+                `<path d="M ${arcR} 0 A ${arcR} ${arcR} 0 ${largeArc} 0 ${arcEndX.toFixed(2)} ${arcEndY.toFixed(2)}" stroke="rgb(125,211,252)" fill="none" stroke-width="1.8"/>`;
+
+            // Drop perpendiculars (only when off the axes)
+            const onAxis = Math.abs(px) < 0.5 || Math.abs(py) < 0.5;
+            const dropLines = onAxis ? '' : `
+                <line x1="${px.toFixed(2)}" y1="${py.toFixed(2)}" x2="${px.toFixed(2)}" y2="0" stroke="rgb(245,158,11)" stroke-width="1" stroke-dasharray="3,3" opacity="0.75"/>
+                <line x1="0" y1="0" x2="${px.toFixed(2)}" y2="0" stroke="rgb(245,158,11)" stroke-width="1.5" opacity="0.75"/>
+            `;
+
+            // Label position — push outward from origin
+            const labelDist = 14;
+            const lx = px + labelDist * Math.cos(rad);
+            const ly = py + labelDist * (-Math.sin(rad)) + (py >= 0 ? 4 : -2);
+            const anchor = lx > 3 ? 'start' : (lx < -3 ? 'end' : 'middle');
+
+            return `<svg viewBox="-115 -95 230 190" class="unit-circle-svg" xmlns="http://www.w3.org/2000/svg">
+                <line x1="-92" y1="0" x2="92" y2="0" stroke="rgb(71,85,105)" stroke-width="1"/>
+                <line x1="0" y1="-85" x2="0" y2="85" stroke="rgb(71,85,105)" stroke-width="1"/>
+                <circle cx="0" cy="0" r="${R}" fill="none" stroke="rgb(100,116,139)" stroke-width="1" opacity="0.55"/>
+                ${dropLines}
+                ${arcPath}
+                <line x1="0" y1="0" x2="${px.toFixed(2)}" y2="${py.toFixed(2)}" stroke="rgb(125,211,252)" stroke-width="2"/>
+                <circle cx="${px.toFixed(2)}" cy="${py.toFixed(2)}" r="4" fill="rgb(125,211,252)"/>
+                <text x="${lx.toFixed(2)}" y="${ly.toFixed(2)}" text-anchor="${anchor}" fill="rgb(186,230,253)" font-size="10" font-family="ui-monospace, monospace" font-weight="bold">(${cosStr}, ${sinStr})</text>
+            </svg>`;
+        }
+
+        /* --- Persistent storage for personal best (graceful degradation) --- */
+        async function loadSpeedRecords() {
+            try {
+                const result = await window.storage.get('speed-records');
+                if (result && result.value) return JSON.parse(result.value);
+            } catch (e) { /* no-op: storage unavailable or no record yet */ }
+            return {};
+        }
+        async function saveSpeedRecords(records) {
+            try { await window.storage.set('speed-records', JSON.stringify(records)); }
+            catch (e) { /* no-op: storage unavailable */ }
+        }
+
+        /* --- AUDIO ENGINE --- */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioEnabled = true;
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            document.getElementById('audio-toggle').innerText = audioEnabled ? '🔊' : '🔇';
+            // Browsers pause audio context until user interaction, wake it up if needed
+            if (audioEnabled && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.1, vol = 0.1, delay = 0) {
+            if (!audioEnabled) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+
+            // Envelope to make the sound "plucky" and satisfying instead of harsh
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime + delay);
+            gainNode.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + delay + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start(audioCtx.currentTime + delay);
+            oscillator.stop(audioCtx.currentTime + delay + duration);
+        }
+
+        function playCorrect() {
+            // A cheerful, ascending perfect 5th
+            playTone(523.25, 'sine', 0.15, 0.15, 0);   // C5
+            playTone(783.99, 'sine', 0.3, 0.15, 0.08); // G5 
+        }
+
+        function playWrong() {
+            // A low, muted buzz
+            playTone(150, 'sawtooth', 0.2, 0.1, 0);
+            playTone(130, 'square', 0.25, 0.1, 0.1);
+        }
+
+        function playFinish() {
+            // Triumphant C-major arpeggio
+            playTone(523.25, 'sine', 0.1, 0.15, 0);     // C5
+            playTone(659.25, 'sine', 0.1, 0.15, 0.1);   // E5
+            playTone(783.99, 'sine', 0.1, 0.15, 0.2);   // G5
+            playTone(1046.50, 'sine', 0.4, 0.15, 0.3);  // C6
+        }
+
         /* --- GAME STATE --- */
         let state = {
             mode: 'unlimited', 
@@ -282,7 +736,11 @@
             targetCount: 20,
             targetTime: 300,
             currentQ: null,
-            locked: false
+            locked: false,
+            active: false,
+            paused: false,
+            streak: 0,
+            drillSet: null
         };
 
         function getActiveFunctions() {
@@ -294,12 +752,18 @@
         }
 
         function generateQuestion() {
-            const funcs = getActiveFunctions();
-            const func = funcs[Math.floor(Math.random() * funcs.length)];
-            let deg = baseAngles[Math.floor(Math.random() * baseAngles.length)];
-
-            if (document.getElementById('cfg-neg').checked && Math.random() < 0.4) deg -= 360;
-            if (document.getElementById('cfg-over').checked && Math.random() < 0.3) deg += 360;
+            let func, deg;
+            if (state.drillSet && state.drillSet.length > 0) {
+                const pick = state.drillSet[Math.floor(Math.random() * state.drillSet.length)];
+                func = pick.func;
+                deg = pick.deg;
+            } else {
+                const funcs = getActiveFunctions();
+                func = funcs[Math.floor(Math.random() * funcs.length)];
+                deg = baseAngles[Math.floor(Math.random() * baseAngles.length)];
+                if (document.getElementById('cfg-neg').checked && Math.random() < 0.4) deg -= 360;
+                if (document.getElementById('cfg-over').checked && Math.random() < 0.3) deg += 360;
+            }
 
             const radStr = degToRadStr(deg);
             const correctAns = getAnswer(func, deg);
@@ -320,7 +784,7 @@
                 options.add(allOpts[Math.floor(Math.random() * allOpts.length)]);
             }
 
-            return { text: `${func}(${radStr})`, correct: correctAns, options: shuffle(Array.from(options)) };
+            return { text: `${func}(${radStr})`, correct: correctAns, options: shuffle(Array.from(options)), func, deg };
         }
 
         /* --- UI CONTROLLERS --- */
@@ -344,10 +808,16 @@
             target.classList.add('fade-in');
         }
 
-        function startGame(mode) {
+        function startGame(mode, drillSet = null) {
+            if (audioEnabled && audioCtx.state === 'suspended') audioCtx.resume();
+            
             state.mode = mode;
             state.history = [];
             state.locked = false;
+            state.active = true;
+            state.paused = false;
+            state.streak = 0;
+            state.drillSet = drillSet;
             state.targetCount = parseInt(document.getElementById('cfg-count').value) || 20;
             // Time input is now in MINUTES — convert to seconds internally
             const minutes = parseFloat(document.getElementById('cfg-time').value) || 5;
@@ -355,12 +825,17 @@
             state.timeTotal = state.mode === 'speed' ? state.targetTime : 0;
             state.startTime = Date.now();
 
-            document.getElementById('header-subtitle').innerText = mode === 'speed' ? 'Speed Round' : 'Unlimited Practice';
-            
+            const subtitleEl = document.getElementById('header-subtitle');
+            if (drillSet) {
+                subtitleEl.innerText = `Drilling ${drillSet.length} Miss${drillSet.length === 1 ? '' : 'es'}`;
+            } else {
+                subtitleEl.innerText = mode === 'speed' ? 'Speed Round' : 'Unlimited Practice';
+            }
+
             clearInterval(state.interval);
             state.interval = setInterval(updateTimer, 1000);
             updateTimer(); // instant update
-            
+
             switchView('game');
             renderNextQuestion();
         }
@@ -388,6 +863,130 @@
             }
         }
 
+        function renderProgress() {
+            const el = document.getElementById('game-progress');
+            // Hide streak specifically in speed mode to make it feel like a strict test
+            const streakHtml = (state.streak > 0 && state.mode !== 'speed')
+                ? `<span class="streak-badge${state.streak >= 5 ? ' streak-hot' : ''}">🔥 ${state.streak}</span>`
+                : '';
+                
+            if (state.mode === 'speed') {
+                el.innerHTML = `Q: ${state.history.length + 1} / ${state.targetCount}${streakHtml}`;
+                return;
+            }
+            // Unlimited mode: live accuracy display
+            const total = state.history.length;
+            const correct = state.history.filter(h => h.isRight).length;
+            const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
+            el.innerHTML = `
+                <span class="text-slate-200">${correct}<span class="text-slate-500 mx-0.5">/</span>${total}</span>
+                <span class="text-slate-600 mx-1.5">·</span>
+                <span id="prog-pct" class="text-sky-300">${pct}%</span>
+                <span id="acc-arrow" class="acc-arrow"></span>
+                ${streakHtml}
+            `;
+        }
+
+        function flashAccuracy(isCorrect) {
+            if (state.mode !== 'unlimited') return;
+            renderProgress(); // refresh numbers first
+            const arrow = document.getElementById('acc-arrow');
+            const pct = document.getElementById('prog-pct');
+            if (arrow) {
+                arrow.textContent = isCorrect ? '↑' : '↓';
+                arrow.className = `acc-arrow ${isCorrect ? 'acc-arrow-up' : 'acc-arrow-down'}`;
+            }
+            if (pct) {
+                pct.classList.remove('pct-flash-green', 'pct-flash-red');
+                void pct.offsetWidth; // restart animation
+                pct.classList.add(isCorrect ? 'pct-flash-green' : 'pct-flash-red');
+            }
+        }
+
+        /* --- Attention pause: stop the clock when the tab is hidden or blurred --- */
+        function pauseTimer() {
+            if (!state.active || state.paused) return;
+            if (state.interval) {
+                clearInterval(state.interval);
+                state.interval = null;
+            }
+            state.paused = true;
+            document.getElementById('game-timer').classList.add('timer-paused');
+        }
+
+        function resumeTimer() {
+            if (!state.active || !state.paused) return;
+            state.paused = false;
+            state.interval = setInterval(updateTimer, 1000);
+            document.getElementById('game-timer').classList.remove('timer-paused');
+        }
+
+        function checkAttention() {
+            if (!state.active) return;
+            const away = document.hidden || !document.hasFocus();
+            if (away) pauseTimer();
+            else resumeTimer();
+        }
+
+        document.addEventListener('visibilitychange', checkAttention);
+        window.addEventListener('blur', checkAttention);
+        window.addEventListener('focus', checkAttention);
+
+        /* --- Keyboard shortcuts: 1-4 to pick options, H to show hint --- */
+        document.addEventListener('keydown', (e) => {
+            // Only active when the game view is on screen
+            if (views.game.classList.contains('hidden')) return;
+            if (e.repeat || state.locked || state.paused) return;
+            // Ignore when typing in an input (none in game view today, but defensive)
+            const tag = (e.target && e.target.tagName) || '';
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+            if (['1', '2', '3', '4'].includes(e.key)) {
+                const idx = parseInt(e.key, 10) - 1;
+                const btns = document.querySelectorAll('#options-grid .opt-btn');
+                if (btns[idx] && !btns[idx].disabled) {
+                    e.preventDefault();
+                    btns[idx].click();
+                }
+            } else if ((e.key === 'h' || e.key === 'H') && state.mode === 'unlimited') {
+                const trigger = document.querySelector('#hint-area .hint-trigger');
+                if (trigger) {
+                    e.preventDefault();
+                    trigger.click();
+                }
+            }
+        });
+
+        /* --- Hint controller (unlimited practice only) --- */
+        function resetHint() {
+            const area = document.getElementById('hint-area');
+            if (state.mode !== 'unlimited') {
+                area.classList.add('hidden');
+                area.innerHTML = '';
+                return;
+            }
+            area.classList.remove('hidden');
+            area.innerHTML = `<button type="button" class="hint-trigger" onclick="showHint()">💡 Need a hint? <span class="kbd-key">H</span></button>`;
+        }
+
+        function showHint() {
+            if (!state.currentQ) return;
+            const area = document.getElementById('hint-area');
+            const lines = getQuestionHint(state.currentQ.func, state.currentQ.deg);
+            const svg = buildUnitCircleSvg(state.currentQ.deg);
+            area.innerHTML = `
+                <div class="hint-panel bg-amber-900/15 border border-amber-700/40 rounded-lg p-3">
+                    <div class="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider mb-2">
+                        <span>💡</span><span>Hint</span>
+                    </div>
+                    <div class="mb-3 pb-3 border-b border-amber-700/30">${svg}</div>
+                    <ul class="space-y-1.5 text-sm text-slate-300">
+                        ${lines.map(l => `<li class="flex items-start gap-2"><span class="text-amber-500/70 mt-1 leading-none">•</span><span class="leading-snug">${l}</span></li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
         function renderNextQuestion() {
             if (state.mode === 'speed' && state.history.length >= state.targetCount) {
                 return endGame();
@@ -397,20 +996,18 @@
             state.locked = false;
 
             document.getElementById('question-text').innerText = state.currentQ.text;
-            
-            let progText = state.mode === 'speed' 
-                ? `Q: ${state.history.length + 1} / ${state.targetCount}` 
-                : `Q: ${state.history.length + 1}`;
-            document.getElementById('game-progress').innerText = progText;
+
+            renderProgress();
+            resetHint();
 
             const grid = document.getElementById('options-grid');
             grid.innerHTML = '';
             
-            state.currentQ.options.forEach(opt => {
+            state.currentQ.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = "opt-btn btn-reactive bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 hover:border-sky-500 text-xl font-bold py-6 rounded-xl";
+                btn.className = "opt-btn btn-reactive relative bg-slate-700 hover:bg-slate-600 border-2 border-slate-600 hover:border-sky-500 text-xl font-bold py-6 rounded-xl";
                 btn.dataset.value = opt;
-                btn.innerText = opt;
+                btn.innerHTML = `<span class="kbd-hint">${idx + 1}</span>${opt}`;
                 btn.onclick = () => handleAnswer(opt, btn);
                 grid.appendChild(btn);
             });
@@ -430,13 +1027,24 @@
                 question: state.currentQ.text,
                 selected: selected,
                 correct: state.currentQ.correct,
-                isRight: isCorrect
+                isRight: isCorrect,
+                func: state.currentQ.func,
+                deg: state.currentQ.deg
             });
 
+            if (isCorrect) {
+                state.streak++;
+                if (state.mode !== 'speed') playCorrect(); // Only play sounds if not a test
+            } else {
+                state.streak = 0;
+                if (state.mode !== 'speed') playWrong(); // Only play sounds if not a test
+            }
+
             if (state.mode === 'unlimited') {
+                flashAccuracy(isCorrect);
                 showFeedbackThenAdvance(selected, isCorrect);
             } else {
-                // Speed mode keeps its current snappy behavior
+                // Speed mode keeps its current snappy behavior and gives zero visual feedback until the end
                 renderNextQuestion();
             }
         }
@@ -449,6 +1057,7 @@
 
             buttons.forEach(btn => {
                 btn.classList.add('opt-locked');
+                btn.disabled = true;
                 // Strip hover styling so it doesn't fight the feedback color
                 btn.classList.remove('hover:bg-slate-600', 'hover:border-sky-500');
                 const v = btn.dataset.value;
@@ -465,7 +1074,7 @@
             const delay = isCorrect ? 750 : 1500;
 
             setTimeout(() => {
-                if (!state.interval) return; // session was ended early
+                if (!state.active) return; // session was ended early
                 const stage = document.getElementById('question-stage');
                 stage.classList.remove('stage-enter');
                 void stage.offsetWidth;
@@ -480,7 +1089,11 @@
         function endGame() {
             clearInterval(state.interval);
             state.interval = null;
+            state.active = false;
+            state.paused = false;
             state.locked = true;
+
+            document.getElementById('game-timer').classList.remove('timer-paused');
 
             let total = state.history.length;
             if (total === 0) return goHome();
@@ -506,20 +1119,118 @@
             if (mistakes.length === 0) {
                 mistakesList.innerHTML = '<div class="text-green-400 p-3 bg-slate-900 rounded-lg text-center font-bold border border-green-900/50">Flawless Run! 🎯</div>';
             } else {
-                mistakes.forEach(m => {
-                    mistakesList.innerHTML += `
-                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 flex justify-between items-center text-sm">
+                mistakes.forEach((m, idx) => {
+                    const hint = getMistakeHint(m.func, m.deg, m.selected, m.correct);
+                    const card = document.createElement('div');
+                    card.className = 'mistake-card bg-slate-900 rounded-lg border border-slate-700 text-sm overflow-hidden';
+                    card.style.animationDelay = `${idx * 60}ms`;
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center px-3 pt-3 pb-2">
                             <span class="font-mono text-slate-300 font-bold">${m.question}</span>
                             <div class="text-right">
                                 <span class="text-red-400 line-through mr-2">${m.selected}</span>
                                 <span class="text-green-400 font-bold">${m.correct}</span>
                             </div>
                         </div>
+                        <div class="flex items-start gap-2 px-3 pb-3 pt-2 border-t border-slate-800 text-xs text-slate-400">
+                            <span class="text-sky-400 font-bold leading-none">↳</span>
+                            <span class="italic leading-snug">${hint}</span>
+                        </div>
                     `;
+                    mistakesList.appendChild(card);
                 });
             }
 
+            // Per-function accuracy breakdown
+            renderFunctionBreakdown();
+
+            // Action buttons (dynamic — drill misses appears only when there are misses)
+            renderResultsActions(mistakes);
+
+            // Personal best for completed speed rounds (async, gracefully degrades)
+            const pbEl = document.getElementById('pb-display');
+            pbEl.classList.add('hidden');
+            pbEl.innerHTML = '';
+            if (state.mode === 'speed' && state.history.length >= state.targetCount) {
+                handleSpeedPB(timeElapsed, acc);
+            }
+
+            if (total > 0 && state.mode !== 'speed') playFinish(); // Don't play fanfare on speed tests
+
             switchView('results');
+        }
+
+        function renderFunctionBreakdown() {
+            const stats = getFunctionStats(state.history);
+            const wrap = document.getElementById('func-breakdown');
+            const rows = document.getElementById('func-rows');
+            if (stats.length === 0) {
+                wrap.classList.add('hidden');
+                return;
+            }
+            wrap.classList.remove('hidden');
+            rows.innerHTML = stats.map((s, idx) => {
+                const color = accColor(s.pct);
+                const rowDelay = idx * 80;
+                const barDelay = rowDelay + 120;
+                return `
+                    <div class="func-row flex items-center gap-2.5 text-xs" style="animation-delay: ${rowDelay}ms">
+                        <span class="font-mono font-bold text-slate-200 w-10">${s.func}</span>
+                        <div class="flex-1 h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+                            <div class="func-bar-fill h-full rounded-full" style="--bar-width: ${s.pct}%; background: ${color}; animation-delay: ${barDelay}ms;"></div>
+                        </div>
+                        <span class="font-bold w-10 text-right" style="color: ${color}">${s.pct}%</span>
+                        <span class="text-slate-500 w-12 text-right tabular-nums">${s.correct}/${s.total}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderResultsActions(mistakes) {
+            const el = document.getElementById('results-actions');
+            const homeBtn = `<button onclick="goHome()" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-900/50">Back to Menu</button>`;
+            if (!mistakes || mistakes.length === 0) {
+                el.innerHTML = homeBtn;
+                return;
+            }
+            const drillBtn = `<button onclick="practiceMisses()" class="btn-reactive w-full py-4 rounded-xl font-bold text-lg bg-slate-700 hover:bg-slate-600 text-white border border-slate-500">Drill ${mistakes.length} Miss${mistakes.length === 1 ? '' : 'es'}</button>`;
+            el.innerHTML = drillBtn + homeBtn;
+        }
+
+        function practiceMisses() {
+            const mistakes = state.history.filter(h => !h.isRight);
+            if (mistakes.length === 0) return goHome();
+            const drillSet = mistakes.map(m => ({ func: m.func, deg: m.deg }));
+            startGame('unlimited', drillSet);
+        }
+
+        async function handleSpeedPB(timeSec, accPct) {
+            const records = await loadSpeedRecords();
+            const key = String(state.targetCount);
+            const existing = records[key] || { time: Infinity, acc: 0 };
+
+            let pbTime = false, pbAcc = false;
+            if (timeSec < existing.time) { existing.time = timeSec; pbTime = true; }
+            if (accPct > existing.acc) { existing.acc = accPct; pbAcc = true; }
+
+            records[key] = existing;
+            await saveSpeedRecords(records);
+
+            const pbEl = document.getElementById('pb-display');
+            if (!pbEl) return;
+            pbEl.classList.remove('hidden');
+            pbEl.innerHTML = `
+                <div class="pb-card bg-slate-900 border border-slate-700 rounded-xl p-3">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-slate-400 text-xs font-bold uppercase tracking-wider">Personal Best · ${state.targetCount} Q</span>
+                        ${(pbTime || pbAcc) ? '<span class="pb-new text-xs">★ NEW</span>' : ''}
+                    </div>
+                    <div class="flex items-center justify-between text-sm font-mono">
+                        <span><span class="text-slate-500">time</span> <span class="${pbTime ? 'pb-new' : 'text-indigo-300'} font-bold">${formatTime(existing.time)}</span></span>
+                        <span><span class="text-slate-500">accuracy</span> <span class="${pbAcc ? 'pb-new' : 'text-sky-300'} font-bold">${existing.acc}%</span></span>
+                    </div>
+                </div>
+            `;
         }
 
         function goHome() {
